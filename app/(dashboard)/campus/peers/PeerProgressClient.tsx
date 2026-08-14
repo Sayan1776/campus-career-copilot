@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import NavBar from '@/components/NavBar';
 import Link from 'next/link';
 
 export interface PeerStudent {
@@ -74,16 +73,13 @@ export default function PeerProgressClient({ students, userRole }: Props) {
   );
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-16">
-      <NavBar label={userRole} />
-
-      <main className="mx-auto max-w-6xl px-4 sm:px-6">
+    <div className="dashboard-content">
         {/* Page Header */}
-        <div className="mb-6 border-b border-slate-200 pb-5">
+        <div className="mb-6 border-b border-[#1e2923] pb-5">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
             <div>
               <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold text-slate-900">Campus Peer Progress Hub</h1>
+                <h1 className="text-2xl font-bold text-white">Campus Peer Progress Hub</h1>
                 <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">
                   Institution Live Directory
                 </span>
@@ -95,7 +91,7 @@ export default function PeerProgressClient({ students, userRole }: Props) {
             <div className="flex gap-2">
               <Link
                 href="/student/dashboard"
-                className="rounded-lg border border-slate-300 bg-white px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 shadow-subtle"
+                className="rounded-lg border border-slate-300 bg-[#121815] px-3 py-1.5 text-xs font-semibold text-slate-300 hover:bg-[#1a231d] shadow-subtle"
               >
                 My Dashboard
               </Link>
@@ -105,26 +101,26 @@ export default function PeerProgressClient({ students, userRole }: Props) {
 
         {/* Institution Stats Bar */}
         <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-subtle">
-            <div className="text-2xl font-bold text-slate-900">{students.length}</div>
+          <div className="rounded-xl border border-[#1e2923] bg-[#121815] p-4 shadow-subtle">
+            <div className="text-2xl font-bold text-white">{students.length}</div>
             <div className="text-xs font-medium text-slate-500">Total Enrolled Cohort</div>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-subtle">
-            <div className="text-2xl font-bold text-indigo-600">{avgScore}/100</div>
+          <div className="rounded-xl border border-[#1e2923] bg-[#121815] p-4 shadow-subtle">
+            <div className="text-2xl font-bold text-[#00D68F]">{avgScore}/100</div>
             <div className="text-xs font-medium text-slate-500">Batch Avg. Readiness</div>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-subtle">
+          <div className="rounded-xl border border-[#1e2923] bg-[#121815] p-4 shadow-subtle">
             <div className="text-2xl font-bold text-emerald-600">{totalJourneysCompleted}</div>
             <div className="text-xs font-medium text-slate-500">Gaps Resolved via Journeys</div>
           </div>
-          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-subtle">
+          <div className="rounded-xl border border-[#1e2923] bg-[#121815] p-4 shadow-subtle">
             <div className="text-2xl font-bold text-amber-600">{departments.length}</div>
             <div className="text-xs font-medium text-slate-500">Active Departments</div>
           </div>
         </div>
 
         {/* Search & Filter Controls */}
-        <div className="mb-6 rounded-xl border border-slate-200 bg-white p-4 shadow-card space-y-3">
+        <div className="mb-6 rounded-xl border border-[#1e2923] bg-[#121815] p-4 shadow-card space-y-3">
           <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
             {/* Search Input */}
             <div className="sm:col-span-5">
@@ -136,7 +132,7 @@ export default function PeerProgressClient({ students, userRole }: Props) {
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
                 placeholder="e.g. Rahul, React, Python, Backend..."
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-800 placeholder-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-200 placeholder-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
               />
             </div>
 
@@ -148,7 +144,7 @@ export default function PeerProgressClient({ students, userRole }: Props) {
               <select
                 value={deptFilter}
                 onChange={(e) => setDeptFilter(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-800 focus:border-indigo-600 focus:outline-none"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-200 focus:border-indigo-600 focus:outline-none"
               >
                 <option value="all">All Departments ({students.length})</option>
                 {departments.map((d) => (
@@ -167,7 +163,7 @@ export default function PeerProgressClient({ students, userRole }: Props) {
               <select
                 value={roleFilter}
                 onChange={(e) => setRoleFilter(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-800 focus:border-indigo-600 focus:outline-none"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-200 focus:border-indigo-600 focus:outline-none"
               >
                 <option value="all">All Roles</option>
                 {targetRoles.map((r) => (
@@ -186,7 +182,7 @@ export default function PeerProgressClient({ students, userRole }: Props) {
               <select
                 value={sortBy}
                 onChange={(e) => setSortBy(e.target.value as any)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-800 focus:border-indigo-600 focus:outline-none"
+                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-200 focus:border-indigo-600 focus:outline-none"
               >
                 <option value="score">Readiness Score</option>
                 <option value="skills">Total Skills</option>
@@ -203,19 +199,19 @@ export default function PeerProgressClient({ students, userRole }: Props) {
               student.overallScore >= 75
                 ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
                 : student.overallScore >= 50
-                ? 'text-indigo-700 bg-indigo-50 border-indigo-200'
+                ? 'text-[#00e89b] bg-[#00D68F]/10 border-[#00D68F]/20'
                 : 'text-amber-700 bg-amber-50 border-amber-200';
 
             return (
               <div
                 key={student.id}
-                className="rounded-xl border border-slate-200 bg-white p-5 shadow-card hover:border-indigo-200 transition-all flex flex-col justify-between"
+                className="rounded-xl border border-[#1e2923] bg-[#121815] p-5 shadow-card hover:border-[#00D68F]/20 transition-all flex flex-col justify-between"
               >
                 <div>
                   {/* Top Row: Student Name & Score */}
                   <div className="flex items-start justify-between gap-2 mb-2">
                     <div>
-                      <h3 className="font-bold text-sm text-slate-900 leading-tight">
+                      <h3 className="font-bold text-sm text-white leading-tight">
                         {student.name}
                       </h3>
                       <div className="text-xs text-slate-500 font-medium">
@@ -233,7 +229,7 @@ export default function PeerProgressClient({ students, userRole }: Props) {
 
                   {/* Target Role */}
                   <div className="mb-3">
-                    <span className="inline-block rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-semibold text-slate-700">
+                    <span className="inline-block rounded-md bg-[#080B09] px-2 py-0.5 text-[11px] font-semibold text-slate-300">
                       🎯 {student.targetRole || 'Software Engineer'}
                     </span>
                   </div>
@@ -247,13 +243,13 @@ export default function PeerProgressClient({ students, userRole }: Props) {
                       {student.extractedSkills.slice(0, 5).map((skill) => (
                         <span
                           key={skill}
-                          className="rounded-md bg-slate-100 px-2 py-0.5 text-[11px] font-medium text-slate-700"
+                          className="rounded-md bg-[#080B09] px-2 py-0.5 text-[11px] font-medium text-slate-300"
                         >
                           {skill}
                         </span>
                       ))}
                       {student.extractedSkills.length > 5 && (
-                        <span className="rounded-md bg-slate-50 px-1.5 py-0.5 text-[10px] text-slate-400">
+                        <span className="rounded-md bg-[#1a231d] px-1.5 py-0.5 text-[10px] text-slate-400">
                           +{student.extractedSkills.length - 5} more
                         </span>
                       )}
@@ -262,7 +258,7 @@ export default function PeerProgressClient({ students, userRole }: Props) {
 
                   {/* Skill Journeys in Progress */}
                   {student.recentJourneys && student.recentJourneys.length > 0 && (
-                    <div className="mb-3 rounded-lg bg-slate-50 p-2.5 border border-slate-100">
+                    <div className="mb-3 rounded-lg bg-[#1a231d] p-2.5 border border-[#233028]">
                       <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
                         Active Gap Learning:
                       </div>
@@ -270,14 +266,14 @@ export default function PeerProgressClient({ students, userRole }: Props) {
                         {student.recentJourneys.slice(0, 2).map((j, idx) => (
                           <div
                             key={idx}
-                            className="flex items-center justify-between text-[11px] text-slate-700"
+                            className="flex items-center justify-between text-[11px] text-slate-300"
                           >
                             <span className="font-medium truncate max-w-[140px]">{j.skill}</span>
                             <span
                               className={`text-[9px] font-bold px-1.5 py-0.2 rounded ${
                                 j.status === 'completed'
                                   ? 'bg-emerald-100 text-emerald-800'
-                                  : 'bg-indigo-100 text-indigo-800'
+                                  : 'bg-[#00D68F]/20 text-[#00D68F]'
                               }`}
                             >
                               {j.status === 'completed'
@@ -292,7 +288,7 @@ export default function PeerProgressClient({ students, userRole }: Props) {
                 </div>
 
                 {/* Card Footer */}
-                <div className="pt-3 border-t border-slate-100 flex items-center justify-between">
+                <div className="pt-3 border-t border-[#233028] flex items-center justify-between">
                   <span className="text-[11px] text-slate-400">
                     {student.uploadedAt
                       ? `Evaluated ${new Date(student.uploadedAt).toLocaleDateString()}`
@@ -311,7 +307,7 @@ export default function PeerProgressClient({ students, userRole }: Props) {
         </div>
 
         {filteredStudents.length === 0 && (
-          <div className="rounded-xl border border-slate-200 bg-white p-12 text-center">
+          <div className="rounded-xl border border-[#1e2923] bg-[#121815] p-12 text-center">
             <p className="text-sm text-slate-500 font-medium">
               No students match the current filters. Try changing your search keywords.
             </p>
@@ -321,17 +317,17 @@ export default function PeerProgressClient({ students, userRole }: Props) {
         {/* Student Detail Modal */}
         {selectedStudent && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-            <div className="w-full max-w-lg rounded-2xl bg-white p-6 shadow-2xl border border-slate-200 max-h-[90vh] overflow-y-auto">
-              <div className="flex items-start justify-between border-b border-slate-100 pb-4 mb-4">
+            <div className="w-full max-w-lg rounded-2xl bg-[#121815] p-6 shadow-2xl border border-[#1e2923] max-h-[90vh] overflow-y-auto">
+              <div className="flex items-start justify-between border-b border-[#233028] pb-4 mb-4">
                 <div>
-                  <h3 className="text-lg font-bold text-slate-900">{selectedStudent.name}</h3>
+                  <h3 className="text-lg font-bold text-white">{selectedStudent.name}</h3>
                   <p className="text-xs text-slate-500">
                     {selectedStudent.department} &bull; Class of {selectedStudent.batchYear}
                   </p>
                 </div>
                 <button
                   onClick={() => setSelectedStudent(null)}
-                  className="rounded-lg p-1.5 text-slate-400 hover:bg-slate-100 hover:text-slate-700"
+                  className="rounded-lg p-1.5 text-slate-400 hover:bg-[#080B09] hover:text-slate-300"
                 >
                   ✕
                 </button>
@@ -339,14 +335,14 @@ export default function PeerProgressClient({ students, userRole }: Props) {
 
               {/* Modal Body */}
               <div className="space-y-4">
-                <div className="flex items-center justify-between rounded-xl bg-slate-50 p-3 border border-slate-100">
+                <div className="flex items-center justify-between rounded-xl bg-[#1a231d] p-3 border border-[#233028]">
                   <div>
                     <div className="text-xs text-slate-500">Placement Target Role</div>
-                    <div className="text-sm font-bold text-slate-800">{selectedStudent.targetRole}</div>
+                    <div className="text-sm font-bold text-slate-200">{selectedStudent.targetRole}</div>
                   </div>
                   <div className="text-right">
                     <div className="text-xs text-slate-500">Readiness Score</div>
-                    <div className="text-base font-extrabold text-indigo-600">
+                    <div className="text-base font-extrabold text-[#00D68F]">
                       {selectedStudent.overallScore} / 100
                     </div>
                   </div>
@@ -360,7 +356,7 @@ export default function PeerProgressClient({ students, userRole }: Props) {
                     {selectedStudent.extractedSkills.map((s) => (
                       <span
                         key={s}
-                        className="rounded-md bg-indigo-50 border border-indigo-100 px-2.5 py-1 text-xs font-medium text-indigo-700"
+                        className="rounded-md bg-[#00D68F]/10 border border-[#00D68F]/10 px-2.5 py-1 text-xs font-medium text-[#00e89b]"
                       >
                         {s}
                       </span>
@@ -377,14 +373,14 @@ export default function PeerProgressClient({ students, userRole }: Props) {
                       {selectedStudent.recentJourneys.map((j, i) => (
                         <div
                           key={i}
-                          className="flex items-center justify-between rounded-lg border border-slate-200 p-2.5 bg-slate-50"
+                          className="flex items-center justify-between rounded-lg border border-[#1e2923] p-2.5 bg-[#1a231d]"
                         >
-                          <span className="text-xs font-semibold text-slate-800">{j.skill}</span>
+                          <span className="text-xs font-semibold text-slate-200">{j.skill}</span>
                           <span
                             className={`text-xs font-bold px-2 py-0.5 rounded-full ${
                               j.status === 'completed'
                                 ? 'bg-emerald-100 text-emerald-800'
-                                : 'bg-indigo-100 text-indigo-800'
+                                : 'bg-[#00D68F]/20 text-[#00D68F]'
                             }`}
                           >
                             {j.status === 'completed'
@@ -411,7 +407,6 @@ export default function PeerProgressClient({ students, userRole }: Props) {
             </div>
           </div>
         )}
-      </main>
     </div>
   );
 }

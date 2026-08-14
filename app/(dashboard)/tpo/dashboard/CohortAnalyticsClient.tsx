@@ -2,7 +2,6 @@
 
 import { useState, useMemo } from 'react';
 import { useRouter } from 'next/navigation';
-import NavBar from '@/components/NavBar';
 import Link from 'next/link';
 import {
   BarChart,
@@ -138,15 +137,12 @@ export default function CohortAnalyticsClient({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-16">
-      <NavBar label="TPO" />
-
-      <main className="mx-auto max-w-6xl px-4 sm:px-6 space-y-6">
+    <div className="dashboard-content">
         {/* Header bar */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-[#1e2923] pb-5">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-slate-900">Placement Cell Cohort Analytics</h1>
+              <h1 className="text-2xl font-bold text-white">Placement Cell Cohort Analytics</h1>
               <span className="rounded-full bg-slate-900 px-2.5 py-0.5 text-xs font-semibold text-white">
                 TPO Executive View
               </span>
@@ -159,7 +155,7 @@ export default function CohortAnalyticsClient({
           <div className="flex items-center gap-2">
             <Link
               href="/campus/peers"
-              className="rounded-xl border border-slate-300 bg-white px-3.5 py-2 text-xs font-bold text-slate-700 hover:bg-slate-50 transition-colors shadow-subtle"
+              className="rounded-xl border border-slate-300 bg-[#121815] px-3.5 py-2 text-xs font-bold text-slate-300 hover:bg-[#1a231d] transition-colors shadow-subtle"
             >
               👥 Open Student Directory
             </Link>
@@ -175,41 +171,41 @@ export default function CohortAnalyticsClient({
 
         {/* Summary Metric Cards */}
         <div className="grid grid-cols-2 gap-4 sm:grid-cols-5">
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
-            <div className="text-2xl font-extrabold text-slate-900">{totalStudents}</div>
+          <div className="rounded-2xl border border-[#1e2923] bg-[#121815] p-4 shadow-card">
+            <div className="text-2xl font-extrabold text-white">{totalStudents}</div>
             <div className="text-xs font-medium text-slate-500">Registered Students</div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
-            <div className="text-2xl font-extrabold text-indigo-600">{totalEvaluated}</div>
+          <div className="rounded-2xl border border-[#1e2923] bg-[#121815] p-4 shadow-card">
+            <div className="text-2xl font-extrabold text-[#00D68F]">{totalEvaluated}</div>
             <div className="text-xs font-medium text-slate-500">Resumes Evaluated</div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
-            <div className="text-2xl font-extrabold text-slate-900">{averageScore}/100</div>
+          <div className="rounded-2xl border border-[#1e2923] bg-[#121815] p-4 shadow-card">
+            <div className="text-2xl font-extrabold text-white">{averageScore}/100</div>
             <div className="text-xs font-medium text-slate-500">Batch Avg. Score</div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
+          <div className="rounded-2xl border border-[#1e2923] bg-[#121815] p-4 shadow-card">
             <div className="text-2xl font-extrabold text-rose-600">{criticalGapCount}</div>
             <div className="text-xs font-medium text-slate-500">High-Priority Gaps</div>
           </div>
-          <div className="rounded-2xl border border-slate-200 bg-white p-4 shadow-card">
+          <div className="rounded-2xl border border-[#1e2923] bg-[#121815] p-4 shadow-card">
             <div className="text-2xl font-extrabold text-emerald-600">{totalJourneysResolved}</div>
             <div className="text-xs font-medium text-slate-500">Gaps Resolved by AI Quests</div>
           </div>
         </div>
 
         {totalEvaluated === 0 ? (
-          <div className="rounded-2xl border border-dashed border-slate-300 bg-white p-12 text-center shadow-card">
-            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 text-xl">
+          <div className="rounded-2xl border border-dashed border-slate-300 bg-[#121815] p-12 text-center shadow-card">
+            <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#00D68F]/10 text-[#00D68F] text-xl">
               📊
             </div>
-            <h3 className="text-base font-bold text-slate-800">No Evaluated Cohort Data Yet</h3>
+            <h3 className="text-base font-bold text-slate-200">No Evaluated Cohort Data Yet</h3>
             <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto mb-4">
               Click &quot;Seed Demo Cohort&quot; above to populate 18 realistic student accounts, skill gaps, and journeys.
             </p>
             <button
               onClick={handleSeed}
               disabled={seeding}
-              className="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-700"
+              className="rounded-xl bg-[#00D68F] px-4 py-2 text-xs font-bold text-[#041a12] hover:bg-[#00e89b]"
             >
               {seeding ? 'Populating...' : 'Seed Demo Cohort Now'}
             </button>
@@ -218,10 +214,10 @@ export default function CohortAnalyticsClient({
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-6">
             {/* Left Col: Skill Gap Diagnostics Chart & Actions */}
             <div className="lg:col-span-6 space-y-6">
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
+              <div className="rounded-2xl border border-[#1e2923] bg-[#121815] p-6 shadow-card">
                 <div className="mb-4 flex items-center justify-between">
                   <div>
-                    <h2 className="text-sm font-bold text-slate-900">
+                    <h2 className="text-sm font-bold text-white">
                       Cohort Skill Gap Diagnostics
                     </h2>
                     <p className="text-xs text-slate-500">
@@ -237,7 +233,7 @@ export default function CohortAnalyticsClient({
                         className={`rounded-lg px-2.5 py-1 text-xs font-semibold capitalize transition-all ${
                           severityFilter === s
                             ? 'bg-slate-900 text-white'
-                            : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                            : 'bg-[#080B09] text-slate-400 hover:bg-slate-200'
                         }`}
                       >
                         {s}
@@ -272,7 +268,7 @@ export default function CohortAnalyticsClient({
                 </ResponsiveContainer>
 
                 {/* Gap Intervention Broadcast Trigger */}
-                <div className="mt-4 pt-4 border-t border-slate-100 space-y-2">
+                <div className="mt-4 pt-4 border-t border-[#233028] space-y-2">
                   <h3 className="text-xs font-bold uppercase tracking-wider text-slate-500">
                     Direct Targeted Interventions
                   </h3>
@@ -280,21 +276,21 @@ export default function CohortAnalyticsClient({
                     {filteredGaps.map((g) => (
                       <div
                         key={g.skill}
-                        className="flex items-center justify-between rounded-xl border border-slate-200 bg-slate-50 p-2.5"
+                        className="flex items-center justify-between rounded-xl border border-[#1e2923] bg-[#1a231d] p-2.5"
                       >
                         <div className="flex items-center gap-2">
                           <span
                             className="h-2 w-2 rounded-full"
                             style={{ backgroundColor: SEVERITY_COLORS[g.severity] }}
                           />
-                          <span className="text-xs font-bold text-slate-800">{g.skill}</span>
+                          <span className="text-xs font-bold text-slate-200">{g.skill}</span>
                           <span className="text-[11px] text-slate-500 font-medium">
                             ({g.count} students &bull; {g.percentage}%)
                           </span>
                         </div>
                         <button
                           onClick={() => openNotifyModal(g)}
-                          className="rounded-lg bg-indigo-50 border border-indigo-200 px-2.5 py-1 text-xs font-bold text-indigo-700 hover:bg-indigo-100"
+                          className="rounded-lg bg-[#00D68F]/10 border border-[#00D68F]/20 px-2.5 py-1 text-xs font-bold text-[#00e89b] hover:bg-[#00D68F]/20"
                         >
                           📢 Notify Affected
                         </button>
@@ -307,10 +303,10 @@ export default function CohortAnalyticsClient({
 
             {/* Right Col: Student Placement Readiness Roster */}
             <div className="lg:col-span-6 space-y-6">
-              <div className="rounded-2xl border border-slate-200 bg-white p-6 shadow-card">
+              <div className="rounded-2xl border border-[#1e2923] bg-[#121815] p-6 shadow-card">
                 <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
                   <div>
-                    <h2 className="text-sm font-bold text-slate-900">
+                    <h2 className="text-sm font-bold text-white">
                       Placement Readiness Roster ({filteredRoster.length})
                     </h2>
                     <p className="text-xs text-slate-500">Ranked by preparation urgency (weakest first)</p>
@@ -319,7 +315,7 @@ export default function CohortAnalyticsClient({
                     <select
                       value={deptFilter}
                       onChange={(e) => setDeptFilter(e.target.value)}
-                      className="rounded-lg border border-slate-300 px-2.5 py-1 text-xs text-slate-700 focus:outline-none"
+                      className="rounded-lg border border-slate-300 px-2.5 py-1 text-xs text-slate-300 focus:outline-none"
                     >
                       <option value="all">All Departments</option>
                       {departments.map((d) => (
@@ -334,7 +330,7 @@ export default function CohortAnalyticsClient({
                 <div className="overflow-x-auto">
                   <table className="w-full text-left text-xs">
                     <thead>
-                      <tr className="border-b border-slate-200 text-[11px] font-bold text-slate-400 uppercase tracking-wider">
+                      <tr className="border-b border-[#1e2923] text-[11px] font-bold text-slate-400 uppercase tracking-wider">
                         <th className="pb-2">Student</th>
                         <th className="pb-2">Department</th>
                         <th className="pb-2">Target Role</th>
@@ -344,17 +340,17 @@ export default function CohortAnalyticsClient({
                     </thead>
                     <tbody className="divide-y divide-slate-100">
                       {filteredRoster.map((r) => (
-                        <tr key={r.id} className="hover:bg-slate-50 transition-colors">
-                          <td className="py-2.5 font-bold text-slate-900">{r.name}</td>
+                        <tr key={r.id} className="hover:bg-[#1a231d] transition-colors">
+                          <td className="py-2.5 font-bold text-white">{r.name}</td>
                           <td className="py-2.5 text-slate-500">{r.department}</td>
-                          <td className="py-2.5 text-slate-600 font-medium">{r.targetRole}</td>
+                          <td className="py-2.5 text-slate-400 font-medium">{r.targetRole}</td>
                           <td className="py-2.5">
                             <span
                               className={`font-extrabold px-1.5 py-0.5 rounded ${
                                 r.score >= 75
                                   ? 'bg-emerald-50 text-emerald-700'
                                   : r.score >= 50
-                                  ? 'bg-indigo-50 text-indigo-700'
+                                  ? 'bg-[#00D68F]/10 text-[#00e89b]'
                                   : 'bg-rose-50 text-rose-700'
                               }`}
                             >
@@ -367,7 +363,7 @@ export default function CohortAnalyticsClient({
                                 {r.journeysCompleted} mastered
                               </span>
                             ) : r.journeysActive > 0 ? (
-                              <span className="text-indigo-600 font-medium">
+                              <span className="text-[#00D68F] font-medium">
                                 {r.journeysActive} in progress
                               </span>
                             ) : (
@@ -387,8 +383,8 @@ export default function CohortAnalyticsClient({
         {/* Notify Modal */}
         {selectedGap && (
           <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-            <div className="w-full max-w-md rounded-2xl bg-white p-6 shadow-2xl border border-slate-200">
-              <h3 className="text-base font-bold text-slate-900 mb-1">
+            <div className="w-full max-w-md rounded-2xl bg-[#121815] p-6 shadow-2xl border border-[#1e2923]">
+              <h3 className="text-base font-bold text-white mb-1">
                 Notify Students &mdash; {selectedGap.skill}
               </h3>
               <p className="text-xs text-slate-500 mb-4">
@@ -399,7 +395,7 @@ export default function CohortAnalyticsClient({
                 value={notifyMessage}
                 onChange={(e) => setNotifyMessage(e.target.value)}
                 rows={3}
-                className="w-full rounded-xl border border-slate-300 p-3 text-xs text-slate-800 focus:border-indigo-600 focus:outline-none mb-4"
+                className="w-full rounded-xl border border-slate-300 p-3 text-xs text-slate-200 focus:border-indigo-600 focus:outline-none mb-4"
               />
 
               {notifyResult && (
@@ -415,14 +411,14 @@ export default function CohortAnalyticsClient({
               <div className="flex justify-end gap-2">
                 <button
                   onClick={() => setSelectedGap(null)}
-                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-100"
+                  className="rounded-xl px-4 py-2 text-xs font-semibold text-slate-400 hover:bg-[#080B09]"
                 >
                   Close
                 </button>
                 <button
                   onClick={handleNotify}
                   disabled={notifying}
-                  className="rounded-xl bg-indigo-600 px-4 py-2 text-xs font-bold text-white hover:bg-indigo-700 disabled:opacity-50"
+                  className="rounded-xl bg-[#00D68F] px-4 py-2 text-xs font-bold text-[#041a12] hover:bg-[#00e89b] disabled:opacity-50"
                 >
                   {notifying ? 'Dispatching...' : 'Dispatch Broadcast'}
                 </button>
@@ -430,7 +426,6 @@ export default function CohortAnalyticsClient({
             </div>
           </div>
         )}
-      </main>
     </div>
   );
 }

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import NavBar from '@/components/NavBar';
 import Link from 'next/link';
 
 export interface JourneyStep {
@@ -151,16 +150,13 @@ export default function SkillJourneyClient({
   }
 
   return (
-    <div className="min-h-screen bg-slate-50 pb-16">
-      <NavBar label="Student" />
-
-      <main className="mx-auto max-w-6xl px-4 sm:px-6">
+    <div className="dashboard-content">
         {/* Header Bar */}
-        <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-slate-200 pb-5">
+        <div className="mb-6 flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-[#1e2923] pb-5">
           <div>
             <div className="flex items-center gap-2">
-              <h1 className="text-2xl font-bold text-slate-900">Skill Journeys & Gap Resolution</h1>
-              <span className="rounded-full bg-indigo-100 px-2.5 py-0.5 text-xs font-semibold text-indigo-800">
+              <h1 className="text-2xl font-bold text-white">Skill Journeys & Gap Resolution</h1>
+              <span className="rounded-full bg-[#00D68F]/20 px-2.5 py-0.5 text-xs font-semibold text-[#00D68F]">
                 AI Structured
               </span>
             </div>
@@ -170,7 +166,7 @@ export default function SkillJourneyClient({
           </div>
           <Link
             href="/student/dashboard"
-            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-white px-3.5 py-2 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition-colors shadow-subtle"
+            className="inline-flex items-center gap-1.5 rounded-lg border border-slate-300 bg-[#121815] px-3.5 py-2 text-xs font-semibold text-slate-300 hover:bg-[#1a231d] transition-colors shadow-subtle"
           >
             ← Back to Dashboard
           </Link>
@@ -186,7 +182,7 @@ export default function SkillJourneyClient({
           {/* Left Column: List of Journeys & Unresolved Gaps */}
           <div className="lg:col-span-4 space-y-6">
             {/* Active Journeys */}
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-card">
+            <div className="rounded-xl border border-[#1e2923] bg-[#121815] p-4 shadow-card">
               <div className="mb-3 flex items-center justify-between">
                 <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500">
                   Active Learning Roadmaps ({journeys.length})
@@ -212,12 +208,12 @@ export default function SkillJourneyClient({
                         }}
                         className={`w-full text-left rounded-lg p-3 transition-all border ${
                           isSelected
-                            ? 'border-indigo-600 bg-indigo-50/50 shadow-sm'
-                            : 'border-slate-100 hover:border-slate-300 bg-slate-50/50'
+                            ? 'border-indigo-600 bg-[#00D68F]/10/50 shadow-sm'
+                            : 'border-[#233028] hover:border-slate-300 bg-[#1a231d]/50'
                         }`}
                       >
                         <div className="flex items-center justify-between mb-1.5">
-                          <span className="font-semibold text-sm text-slate-900">{j.skill}</span>
+                          <span className="font-semibold text-sm text-white">{j.skill}</span>
                           <span
                             className={`text-[10px] font-bold px-2 py-0.5 rounded-full ${
                               j.status === 'completed'
@@ -233,7 +229,7 @@ export default function SkillJourneyClient({
                         <div className="w-full bg-slate-200 rounded-full h-1.5 overflow-hidden">
                           <div
                             className={`h-full transition-all duration-300 ${
-                              j.status === 'completed' ? 'bg-emerald-500' : 'bg-indigo-600'
+                              j.status === 'completed' ? 'bg-emerald-500' : 'bg-[#00D68F]'
                             }`}
                             style={{ width: `${percent}%` }}
                           />
@@ -250,7 +246,7 @@ export default function SkillJourneyClient({
             </div>
 
             {/* Unresolved Skill Gaps from Resume */}
-            <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-card">
+            <div className="rounded-xl border border-[#1e2923] bg-[#121815] p-4 shadow-card">
               <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-3">
                 Detected Resume Gaps ({unstartedGaps.length})
               </h2>
@@ -264,17 +260,17 @@ export default function SkillJourneyClient({
                   {unstartedGaps.map((gap) => (
                     <div
                       key={gap.skill}
-                      className="flex items-center justify-between rounded-lg border border-slate-200 p-2.5 bg-slate-50"
+                      className="flex items-center justify-between rounded-lg border border-[#1e2923] p-2.5 bg-[#1a231d]"
                     >
                       <div>
-                        <div className="text-xs font-semibold text-slate-800">{gap.skill}</div>
+                        <div className="text-xs font-semibold text-slate-200">{gap.skill}</div>
                         <span
                           className={`text-[10px] font-medium px-1.5 py-0.2 rounded ${
                             gap.severity === 'high'
                               ? 'bg-rose-100 text-rose-700'
                               : gap.severity === 'medium'
                               ? 'bg-amber-100 text-amber-700'
-                              : 'bg-slate-200 text-slate-700'
+                              : 'bg-slate-200 text-slate-300'
                           }`}
                         >
                           {gap.severity} priority
@@ -283,7 +279,7 @@ export default function SkillJourneyClient({
                       <button
                         onClick={() => handleGenerateJourney(gap)}
                         disabled={generatingSkill === gap.skill}
-                        className="rounded-md bg-indigo-600 px-2.5 py-1.5 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors shadow-subtle"
+                        className="rounded-md bg-[#00D68F] px-2.5 py-1.5 text-xs font-semibold text-[#041a12] hover:bg-[#00e89b] disabled:opacity-50 transition-colors shadow-subtle"
                       >
                         {generatingSkill === gap.skill ? 'Creating...' : '+ Start Quest'}
                       </button>
@@ -297,17 +293,17 @@ export default function SkillJourneyClient({
           {/* Right Column: Selected Journey Detail View */}
           <div className="lg:col-span-8">
             {selectedJourney ? (
-              <div className="rounded-xl border border-slate-200 bg-white p-6 shadow-card space-y-6">
+              <div className="rounded-xl border border-[#1e2923] bg-[#121815] p-6 shadow-card space-y-6">
                 {/* Journey Title Banner */}
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-slate-100 pb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 border-b border-[#233028] pb-4">
                   <div>
                     <div className="flex items-center gap-2">
-                      <span className="text-xl font-bold text-slate-900">{selectedJourney.skill}</span>
+                      <span className="text-xl font-bold text-white">{selectedJourney.skill}</span>
                       <span
                         className={`rounded-full px-2.5 py-0.5 text-xs font-semibold ${
                           selectedJourney.status === 'completed'
                             ? 'bg-emerald-100 text-emerald-800 border border-emerald-300'
-                            : 'bg-indigo-100 text-indigo-800'
+                            : 'bg-[#00D68F]/20 text-[#00D68F]'
                         }`}
                       >
                         {selectedJourney.status === 'completed' ? '✓ Mastered' : 'In Progress'}
@@ -319,7 +315,7 @@ export default function SkillJourneyClient({
                   </div>
                   <div className="text-right">
                     <div className="text-xs font-semibold text-slate-500">Milestone Progress</div>
-                    <div className="text-sm font-bold text-indigo-700">
+                    <div className="text-sm font-bold text-[#00e89b]">
                       {selectedJourney.completed_steps} / {selectedJourney.total_steps || 3} Completed
                     </div>
                   </div>
@@ -338,7 +334,7 @@ export default function SkillJourneyClient({
                         className={`rounded-xl border transition-all ${
                           step.completed
                             ? 'border-emerald-200 bg-emerald-50/30'
-                            : 'border-slate-200 bg-white'
+                            : 'border-[#1e2923] bg-[#121815]'
                         } p-5 shadow-subtle`}
                       >
                         {/* Step Header */}
@@ -348,13 +344,13 @@ export default function SkillJourneyClient({
                               className={`flex h-7 w-7 items-center justify-center rounded-lg text-xs font-bold ${
                                 step.completed
                                   ? 'bg-emerald-600 text-white'
-                                  : 'bg-indigo-600 text-white'
+                                  : 'bg-[#00D68F] text-[#041a12]'
                               }`}
                             >
                               {step.completed ? '✓' : step.stepNumber}
                             </div>
                             <div>
-                              <h3 className="text-sm font-bold text-slate-900">{step.title}</h3>
+                              <h3 className="text-sm font-bold text-white">{step.title}</h3>
                               <p className="text-xs text-slate-500">{step.description}</p>
                             </div>
                           </div>
@@ -368,7 +364,7 @@ export default function SkillJourneyClient({
                               className={`rounded-lg px-3 py-1.5 text-xs font-semibold transition-colors ${
                                 step.completed
                                   ? 'border border-emerald-300 bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
-                                  : 'border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200'
+                                  : 'border border-slate-300 bg-[#080B09] text-slate-300 hover:bg-slate-200'
                               }`}
                             >
                               {step.completed ? '✓ Completed' : 'Mark as Done'}
@@ -377,7 +373,7 @@ export default function SkillJourneyClient({
                         </div>
 
                         {/* Step Content */}
-                        <div className="mt-3 rounded-lg bg-slate-50 p-4 border border-slate-100 text-xs leading-relaxed text-slate-700 whitespace-pre-line">
+                        <div className="mt-3 rounded-lg bg-[#1a231d] p-4 border border-[#233028] text-xs leading-relaxed text-slate-300 whitespace-pre-line">
                           {step.content}
                         </div>
 
@@ -394,7 +390,7 @@ export default function SkillJourneyClient({
                                   href={res.url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="inline-flex items-center gap-1 rounded-md bg-indigo-50 border border-indigo-200 px-2.5 py-1 text-xs font-medium text-indigo-700 hover:bg-indigo-100"
+                                  className="inline-flex items-center gap-1 rounded-md bg-[#00D68F]/10 border border-[#00D68F]/20 px-2.5 py-1 text-xs font-medium text-[#00e89b] hover:bg-[#00D68F]/20"
                                 >
                                   🔗 {res.title}
                                 </a>
@@ -406,16 +402,16 @@ export default function SkillJourneyClient({
                         {/* Step 3 Interactive Quiz */}
                         {isStep3 && step.quizQuestions && (
                           <div className="mt-4 space-y-4">
-                            <div className="text-xs font-bold text-slate-700">
+                            <div className="text-xs font-bold text-slate-300">
                               Answer the verification questions below to test your understanding:
                             </div>
 
                             {step.quizQuestions.map((q, qIdx) => (
                               <div
                                 key={qIdx}
-                                className="rounded-lg border border-slate-200 bg-white p-3.5 space-y-2"
+                                className="rounded-lg border border-[#1e2923] bg-[#121815] p-3.5 space-y-2"
                               >
-                                <p className="text-xs font-semibold text-slate-900">
+                                <p className="text-xs font-semibold text-white">
                                   {qIdx + 1}. {q.question}
                                 </p>
                                 <div className="space-y-1.5">
@@ -424,8 +420,8 @@ export default function SkillJourneyClient({
                                       key={optIdx}
                                       className={`flex items-center gap-2.5 rounded-md p-2 text-xs border cursor-pointer transition-colors ${
                                         quizAnswers[qIdx] === optIdx
-                                          ? 'border-indigo-600 bg-indigo-50/70 font-medium text-indigo-900'
-                                          : 'border-slate-200 hover:bg-slate-50 text-slate-700'
+                                          ? 'border-indigo-600 bg-[#00D68F]/10/70 font-medium text-indigo-900'
+                                          : 'border-[#1e2923] hover:bg-[#1a231d] text-slate-300'
                                       }`}
                                     >
                                       <input
@@ -435,7 +431,7 @@ export default function SkillJourneyClient({
                                         onChange={() =>
                                           setQuizAnswers({ ...quizAnswers, [qIdx]: optIdx })
                                         }
-                                        className="text-indigo-600 focus:ring-indigo-500"
+                                        className="text-[#00D68F] focus:ring-indigo-500"
                                       />
                                       <span>{opt}</span>
                                     </label>
@@ -475,7 +471,7 @@ export default function SkillJourneyClient({
                                 actionLoading ||
                                 Object.keys(quizAnswers).length < step.quizQuestions.length
                               }
-                              className="rounded-lg bg-indigo-600 px-4 py-2 text-xs font-semibold text-white hover:bg-indigo-700 disabled:opacity-50 transition-colors shadow-subtle"
+                              className="rounded-lg bg-[#00D68F] px-4 py-2 text-xs font-semibold text-[#041a12] hover:bg-[#00e89b] disabled:opacity-50 transition-colors shadow-subtle"
                             >
                               {actionLoading ? 'Grading...' : 'Verify Answers & Complete Quest'}
                             </button>
@@ -487,11 +483,11 @@ export default function SkillJourneyClient({
                 </div>
               </div>
             ) : (
-              <div className="rounded-xl border border-dashed border-slate-300 bg-white p-12 text-center text-slate-500">
-                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-indigo-50 text-indigo-600 text-xl">
+              <div className="rounded-xl border border-dashed border-slate-300 bg-[#121815] p-12 text-center text-slate-500">
+                <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-full bg-[#00D68F]/10 text-[#00D68F] text-xl">
                   🚀
                 </div>
-                <h3 className="text-base font-semibold text-slate-800">Select or Start a Skill Journey</h3>
+                <h3 className="text-base font-semibold text-slate-200">Select or Start a Skill Journey</h3>
                 <p className="mt-1 text-xs text-slate-500 max-w-sm mx-auto">
                   Pick a skill from the list on the left to start closing your gaps before campus placement drives.
                 </p>
@@ -499,7 +495,6 @@ export default function SkillJourneyClient({
             )}
           </div>
         </div>
-      </main>
     </div>
   );
 }

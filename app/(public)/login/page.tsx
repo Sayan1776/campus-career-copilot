@@ -43,14 +43,14 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
-      <div className="w-full max-w-md rounded-2xl border border-slate-200 bg-white p-8 shadow-card">
+    <main className="flex min-h-screen items-center justify-center bg-[#1a231d] p-4">
+      <div className="w-full max-w-md rounded-2xl border border-[#1e2923] bg-[#121815] p-8 shadow-card">
         {/* Header */}
         <div className="mb-6 text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-indigo-600 font-bold text-white text-xl shadow-md">
+          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#00D68F] font-bold text-[#041a12] text-xl shadow-md">
             🎓
           </div>
-          <h1 className="text-2xl font-bold text-slate-900">Campus Career Copilot</h1>
+          <h1 className="text-2xl font-bold text-white">Campus Career Copilot</h1>
           <p className="text-xs text-slate-500 mt-1">Institutional Placement & Skill Readiness Portal</p>
         </div>
 
@@ -65,7 +65,7 @@ export default function LoginPage() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="student@campus.edu"
-              className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs text-slate-900 focus:border-indigo-600 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs text-white focus:border-indigo-600 focus:outline-none"
             />
           </div>
 
@@ -79,7 +79,7 @@ export default function LoginPage() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               placeholder="••••••••"
-              className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs text-slate-900 focus:border-indigo-600 focus:outline-none"
+              className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs text-white focus:border-indigo-600 focus:outline-none"
             />
           </div>
 
@@ -99,7 +99,7 @@ export default function LoginPage() {
 
           <p className="pt-2 text-center text-xs text-slate-500">
             Need an institutional account?{' '}
-            <Link href="/signup" className="font-bold text-indigo-600 hover:text-indigo-800">
+            <Link href="/signup" className="font-bold text-[#00D68F] hover:text-[#00D68F]">
               Sign up with Invite Code
             </Link>
           </p>
