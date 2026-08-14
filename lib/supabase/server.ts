@@ -1,0 +1,15 @@
+// Server-only Supabase client using the service role key. This bypasses RLS,
+// so it must only ever be used inside API routes after you've already
+// verified the caller's Firebase ID token and role. Never import in client code.
+
+import { createClient } from '@supabase/supabase-js';
+
+const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL!;
+const serviceRoleKey = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+
+export const supabaseAdmin = createClient(supabaseUrl, serviceRoleKey, {
+  auth: { persistSession: false },
+  global: {
+    fetch: (url, options) => fetch(url, { ...options, cache: 'no-store' }),
+  },
+});
