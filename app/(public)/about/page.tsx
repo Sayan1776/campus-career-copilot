@@ -15,7 +15,7 @@ const CampusMap = nextDynamic(() => import('./CampusMap'), {
 
 const CAMPUS_LAT = 22.378;
 const CAMPUS_LNG = 88.4409;
-const CAMPUS_NAME = 'Apex Institute Placement Cell';
+const CAMPUS_NAME = 'GMIT Placement Cell';
 
 export default async function AboutPage() {
   const { data: visits } = await supabaseAdmin

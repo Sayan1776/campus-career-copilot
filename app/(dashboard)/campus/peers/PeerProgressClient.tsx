@@ -294,12 +294,12 @@ export default function PeerProgressClient({ students, userRole }: Props) {
                       ? `Evaluated ${new Date(student.uploadedAt).toLocaleDateString()}`
                       : 'No resume'}
                   </span>
-                  <button
-                    onClick={() => setSelectedStudent(student)}
+                  <Link
+                    href={`/campus/peers/${student.id}`}
                     className="rounded-md bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white hover:bg-slate-800 transition-colors"
                   >
                     View Details
-                  </button>
+                  </Link>
                 </div>
               </div>
             );
@@ -314,99 +314,6 @@ export default function PeerProgressClient({ students, userRole }: Props) {
           </div>
         )}
 
-        {/* Student Detail Modal */}
-        {selectedStudent && (
-          <div className="fixed inset-0 z-50 flex items-center justify-center bg-slate-900/50 backdrop-blur-sm p-4">
-            <div className="w-full max-w-lg rounded-2xl bg-[#121815] p-6 shadow-2xl border border-[#1e2923] max-h-[90vh] overflow-y-auto">
-              <div className="flex items-start justify-between border-b border-[#233028] pb-4 mb-4">
-                <div>
-                  <h3 className="text-lg font-bold text-white">{selectedStudent.name}</h3>
-                  <p className="text-xs text-slate-500">
-                    {selectedStudent.department} &bull; Class of {selectedStudent.batchYear}
-                  </p>
-                </div>
-                <button
-                  onClick={() => setSelectedStudent(null)}
-                  className="rounded-lg p-1.5 text-slate-400 hover:bg-[#080B09] hover:text-slate-300"
-                >
-                  ✕
-                </button>
-              </div>
-
-              {/* Modal Body */}
-              <div className="space-y-4">
-                <div className="flex items-center justify-between rounded-xl bg-[#1a231d] p-3 border border-[#233028]">
-                  <div>
-                    <div className="text-xs text-slate-500">Placement Target Role</div>
-                    <div className="text-sm font-bold text-slate-200">{selectedStudent.targetRole}</div>
-                  </div>
-                  <div className="text-right">
-                    <div className="text-xs text-slate-500">Readiness Score</div>
-                    <div className="text-base font-extrabold text-[#00D68F]">
-                      {selectedStudent.overallScore} / 100
-                    </div>
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                    Verified Extracted Skills ({selectedStudent.extractedSkills.length})
-                  </h4>
-                  <div className="flex flex-wrap gap-1.5">
-                    {selectedStudent.extractedSkills.map((s) => (
-                      <span
-                        key={s}
-                        className="rounded-md bg-[#00D68F]/10 border border-[#00D68F]/10 px-2.5 py-1 text-xs font-medium text-[#00e89b]"
-                      >
-                        {s}
-                      </span>
-                    ))}
-                  </div>
-                </div>
-
-                <div>
-                  <h4 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
-                    Skill Journeys & Gap Learning Progress
-                  </h4>
-                  {selectedStudent.recentJourneys && selectedStudent.recentJourneys.length > 0 ? (
-                    <div className="space-y-2">
-                      {selectedStudent.recentJourneys.map((j, i) => (
-                        <div
-                          key={i}
-                          className="flex items-center justify-between rounded-lg border border-[#1e2923] p-2.5 bg-[#1a231d]"
-                        >
-                          <span className="text-xs font-semibold text-slate-200">{j.skill}</span>
-                          <span
-                            className={`text-xs font-bold px-2 py-0.5 rounded-full ${
-                              j.status === 'completed'
-                                ? 'bg-emerald-100 text-emerald-800'
-                                : 'bg-[#00D68F]/20 text-[#00D68F]'
-                            }`}
-                          >
-                            {j.status === 'completed'
-                              ? 'Mastered'
-                              : `${j.completedSteps}/${j.totalSteps || 3} steps done`}
-                          </span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <p className="text-xs text-slate-400">No active skill journeys recorded yet.</p>
-                  )}
-                </div>
-              </div>
-
-              <div className="mt-6 flex justify-end">
-                <button
-                  onClick={() => setSelectedStudent(null)}
-                  className="rounded-lg bg-slate-900 px-4 py-2 text-xs font-semibold text-white hover:bg-slate-800"
-                >
-                  Close
-                </button>
-              </div>
-            </div>
-          </div>
-        )}
     </div>
   );
 }

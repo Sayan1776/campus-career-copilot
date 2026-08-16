@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth } from '@/lib/firebase/admin';
 import { supabaseAdmin } from '@/lib/supabase/server';
-import { analyzeResume } from '@/lib/groq/client';
+import { analyzeResume } from '@/lib/ai/client';
 import { sendPushToTokens } from '@/lib/firebase/send-push';
 
 export const runtime = 'nodejs';

@@ -18,22 +18,13 @@ export default function LoginPage() {
     e.preventDefault();
     setError('');
     setLoading(true);
-
     try {
       const cred = await signInWithEmailAndPassword(auth, email, password);
       const idToken = await cred.user.getIdToken();
       const tokenResult = await cred.user.getIdTokenResult();
       const role = tokenResult.claims.role as string | undefined;
-
-      await fetch('/api/auth/session', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ idToken }),
-      });
-
-      // Fire-and-forget: don't block login on notification permission.
+      await fetch('/api/auth/session', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ idToken }) });
       registerForNotifications();
-
       router.push(role ? `/${role}/dashboard` : '/about');
     } catch {
       setError('Invalid email or password');
@@ -43,68 +34,40 @@ export default function LoginPage() {
   }
 
   return (
-    <main className="flex min-h-screen items-center justify-center bg-[#1a231d] p-4">
-      <div className="w-full max-w-md rounded-2xl border border-[#1e2923] bg-[#121815] p-8 shadow-card">
-        {/* Header */}
-        <div className="mb-6 text-center">
-          <div className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-2xl bg-[#00D68F] font-bold text-[#041a12] text-xl shadow-md">
-            🎓
-          </div>
-          <h1 className="text-2xl font-bold text-white">Campus Career Copilot</h1>
-          <p className="text-xs text-slate-500 mt-1">Institutional Placement & Skill Readiness Portal</p>
+    <main className="grid min-h-screen grid-cols-1 dispatch-grid lg:grid-cols-[1.05fr_.95fr]">
+      <section className="flex flex-col justify-between bg-[#10182b] p-8 text-[#fffdf8] lg:p-12">
+        <Link href="/" className="flex items-center gap-3">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-[#f5c542] text-sm font-black text-[#111827]">CC</div>
+          <div className="text-sm font-black">Campus Career Copilot</div>
+        </Link>
+        <div className="max-w-xl py-20">
+          <h1 className="text-[clamp(3rem,7vw,5.8rem)] font-black leading-[0.88] tracking-[-0.04em]">Enter the placement desk.</h1>
+          <p className="mt-7 text-lg leading-8 text-[#c9d4e6]">Resume intelligence, cohort interventions, and recruiter matching all open from the same role-aware command surface.</p>
         </div>
+        <div className="grid gap-3 text-xs font-bold text-[#c9d4e6] sm:grid-cols-3">
+          <span className="rounded-xl border border-[#263452] p-3">Student readiness</span>
+          <span className="rounded-xl border border-[#263452] p-3">TPO analytics</span>
+          <span className="rounded-xl border border-[#263452] p-3">Recruiter match</span>
+        </div>
+      </section>
 
-        <form onSubmit={handleLogin} className="space-y-4">
-          <div>
-            <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">
-              Campus Email
-            </label>
-            <input
-              type="email"
-              required
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              placeholder="student@campus.edu"
-              className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs text-white focus:border-indigo-600 focus:outline-none"
-            />
+      <section className="flex items-center justify-center p-5 sm:p-8">
+        <div className="ops-panel w-full max-w-md p-7 sm:p-8">
+          <div className="mb-7">
+            <div className="mb-3 inline-flex rounded-full border border-[#d6deea] bg-[#eef5ff] px-3 py-1 text-[11px] font-black uppercase tracking-[0.12em] text-[#65718b]">Secure portal</div>
+            <h2 className="text-3xl font-black tracking-[-0.03em] text-[#14213d]">Sign in</h2>
+            <p className="mt-2 text-sm text-[#65718b]">Use your campus account to continue.</p>
           </div>
 
-          <div>
-            <label className="mb-1 block text-xs font-bold uppercase tracking-wider text-slate-500">
-              Password
-            </label>
-            <input
-              type="password"
-              required
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              className="w-full rounded-xl border border-slate-300 px-3.5 py-2.5 text-xs text-white focus:border-indigo-600 focus:outline-none"
-            />
-          </div>
-
-          {error && (
-            <div className="rounded-xl bg-rose-50 border border-rose-200 p-3 text-xs text-rose-700">
-              {error}
-            </div>
-          )}
-
-          <button
-            type="submit"
-            disabled={loading}
-            className="w-full rounded-xl bg-slate-900 py-3 text-xs font-bold text-white hover:bg-slate-800 disabled:opacity-50 transition-colors shadow-card"
-          >
-            {loading ? 'Signing in...' : 'Sign In to Campus Portal'}
-          </button>
-
-          <p className="pt-2 text-center text-xs text-slate-500">
-            Need an institutional account?{' '}
-            <Link href="/signup" className="font-bold text-[#00D68F] hover:text-[#00D68F]">
-              Sign up with Invite Code
-            </Link>
-          </p>
-        </form>
-      </div>
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div><label className="form-label">Campus Email</label><input type="email" required value={email} onChange={(e) => setEmail(e.target.value)} placeholder="student@campus.edu" className="form-input" /></div>
+            <div><label className="form-label">Password</label><input type="password" required value={password} onChange={(e) => setPassword(e.target.value)} placeholder="Password" className="form-input" /></div>
+            {error && <div className="zebra-alert rounded-xl border border-[#ffb3a8] bg-[#fff0ed] p-3 text-sm font-bold text-[#9f2e21]">{error}</div>}
+            <button type="submit" disabled={loading} className="ops-button-primary w-full px-5 py-3 text-sm disabled:opacity-50">{loading ? 'Signing in...' : 'Sign in to portal'}</button>
+            <p className="pt-2 text-center text-sm text-[#65718b]">Need an institutional account? <Link href="/signup" className="font-black text-[#9a6b00] hover:text-[#14213d]">Sign up with invite code</Link></p>
+          </form>
+        </div>
+      </section>
     </main>
   );
 }

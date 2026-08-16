@@ -2,101 +2,287 @@
 @tailwind components;
 @tailwind utilities;
 
+:root {
+  --sidebar-width: 284px;
+  --content-max-width: 1280px;
+  --ink: #14213d;
+  --ink-soft: #34425f;
+  --muted: #65718b;
+  --line: #d6deea;
+  --line-strong: #b6c3d5;
+  --paper: #fbf7ee;
+  --panel: #fffdf8;
+  --panel-blue: #eef5ff;
+  --navy: #14213d;
+  --signal: #f5c542;
+  --signal-dark: #9a6b00;
+  --coral: #ff6b57;
+  --mint: #2fbf91;
+  --aqua: #5bbdd6;
+  --sidebar-bg: #10182b;
+  --sidebar-hover: #192643;
+  --sidebar-active: #f5c542;
+  --sidebar-text: #c9d4e6;
+  --sidebar-text-active: #111827;
+  --sidebar-border: #263452;
+}
+
 @layer base {
-  :root {
-    --sidebar-width: 260px;
-    --content-max-width: 1200px;
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
   }
 
   body {
-    @apply bg-[#080B09] text-slate-200 antialiased selection:bg-[#00D68F]/30 min-h-screen font-sans;
+    min-height: 100vh;
+    background:
+      radial-gradient(circle at 12% 8%, rgba(245, 197, 66, 0.2), transparent 26rem),
+      radial-gradient(circle at 88% 12%, rgba(91, 189, 214, 0.2), transparent 24rem),
+      linear-gradient(135deg, #fbf7ee 0%, #f2eadc 42%, #e9f1fb 100%);
+    color: var(--ink);
+    font-family: ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
+    text-rendering: optimizeLegibility;
+  }
+
+  ::selection {
+    background: rgba(245, 197, 66, 0.48);
+    color: #111827;
+  }
+
+  a {
+    text-underline-offset: 0.18em;
+  }
+
+  input,
+  select,
+  textarea {
+    background-color: #fffdf8;
+    color: var(--ink);
+  }
+
+  input::placeholder,
+  textarea::placeholder {
+    color: #8793a8;
+  }
+
+  input:focus,
+  select:focus,
+  textarea:focus,
+  button:focus-visible,
+  a:focus-visible {
+    outline: 2px solid var(--signal);
+    outline-offset: 3px;
   }
 }
 
 @layer components {
-  /* Bento card system */
-  .bento-card {
-    @apply rounded-[2rem] border border-[#1e2923] bg-[#121815] p-5 md:p-8 shadow-sm;
-    transition: box-shadow 0.2s ease, transform 0.2s ease, border-color 0.3s ease;
+  .dashboard-content {
+    width: 100%;
+    max-width: var(--content-max-width);
+    margin-inline: auto;
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
   }
-  .bento-card:hover {
-    @apply shadow-[0_0_20px_rgba(0,214,143,0.05)] border-[#00D68F]/20;
+
+  .dashboard-content::before {
+    content: 'PLACEMENT OPERATIONS';
+    align-self: flex-start;
+    border: 1px solid var(--line-strong);
+    background: rgba(255, 253, 248, 0.72);
+    color: var(--muted);
+    padding: 0.35rem 0.65rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+  }
+
+  .bento-card,
+  .bento-card-flush,
+  .bento-stat {
+    border: 1px solid var(--line);
+    background:
+      linear-gradient(180deg, rgba(255, 253, 248, 0.96), rgba(247, 250, 255, 0.92));
+    border-radius: 14px;
+    box-shadow: 0 18px 38px rgba(20, 33, 61, 0.1), 0 1px 0 rgba(255,255,255,0.8) inset;
+  }
+
+  .bento-card {
+    padding: 1.5rem;
   }
 
   .bento-card-flush {
-    @apply rounded-[2rem] border border-[#1e2923] bg-[#121815] shadow-sm overflow-hidden;
-    transition: box-shadow 0.2s ease, border-color 0.3s ease;
-  }
-  .bento-card-flush:hover {
-    @apply shadow-[0_0_20px_rgba(0,214,143,0.05)] border-[#00D68F]/20;
+    overflow: hidden;
   }
 
   .bento-stat {
-    @apply rounded-2xl border border-[#1e2923] bg-[#121815] p-5 shadow-sm;
+    padding: 1.15rem;
   }
+
+  .bento-card:hover,
+  .bento-card-flush:hover,
+  .bento-stat:hover {
+    border-color: #aab7ca;
+    box-shadow: 0 22px 48px rgba(20, 33, 61, 0.14), 0 1px 0 rgba(255,255,255,0.9) inset;
+  }
+
   .bento-stat .stat-value {
-    @apply text-3xl font-extrabold text-white leading-none;
-  }
-  .bento-stat .stat-label {
-    @apply text-xs font-medium text-slate-400 mt-1;
+    color: var(--ink);
+    font-size: 2rem;
+    line-height: 1;
+    font-weight: 900;
   }
 
-  /* Section headings inside dashboard content */
+  .bento-stat .stat-label,
   .section-title {
-    @apply text-xs font-bold uppercase tracking-wider text-slate-500;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 800;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
   }
 
-  /* Dashboard content area */
-  .dashboard-content {
-    @apply p-6 lg:p-8 space-y-6 max-w-[var(--content-max-width)] mx-auto;
-  }
-
-  /* Page header */
   .page-header {
-    @apply flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-5 border-b border-[#233028];
-  }
-  .page-header h1 {
-    @apply text-xl font-bold text-white font-serif;
-  }
-  .page-header p {
-    @apply text-sm text-slate-400 mt-0.5;
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    align-items: flex-end;
+    padding-bottom: 1.25rem;
+    border-bottom: 1px solid var(--line);
   }
 
-  /* Input fields for settings etc */
-  .form-input {
-    @apply w-full rounded-xl border border-[#233028] bg-[#0a0e0c] px-4 py-3 text-sm text-slate-200 
-    focus:border-[#00D68F] focus:bg-[#121815] focus:outline-none focus:ring-2 focus:ring-[#00D68F]/20 transition-all;
+  .page-header h1 {
+    color: var(--ink);
+    font-size: clamp(1.7rem, 3vw, 2.45rem);
+    line-height: 1.02;
+    font-weight: 900;
+    letter-spacing: -0.03em;
   }
-  .form-label {
-    @apply text-xs font-bold uppercase tracking-wider text-slate-500 mb-1.5 block;
+
+  .page-header p {
+    margin-top: 0.4rem;
+    color: var(--muted);
+    font-size: 0.92rem;
   }
+
+  .form-input,
   .form-select {
-    @apply w-full rounded-xl border border-[#233028] bg-[#0a0e0c] px-4 py-3 text-sm text-slate-200 
-    focus:border-[#00D68F] focus:bg-[#121815] focus:outline-none focus:ring-2 focus:ring-[#00D68F]/20 transition-all appearance-none;
+    width: 100%;
+    border-radius: 12px;
+    border: 1px solid var(--line-strong);
+    background: #fffdf8;
+    color: var(--ink);
+    padding: 0.78rem 0.9rem;
+    font-size: 0.875rem;
+    box-shadow: 0 1px 0 rgba(255,255,255,0.8) inset;
+    transition: border-color .2s ease, box-shadow .2s ease, background .2s ease;
+  }
+
+  .form-input:focus,
+  .form-select:focus {
+    border-color: var(--signal-dark);
+    background: #ffffff;
+    box-shadow: 0 0 0 4px rgba(245, 197, 66, 0.22);
+  }
+
+  .form-label {
+    display: block;
+    margin-bottom: 0.45rem;
+    color: var(--muted);
+    font-size: 0.68rem;
+    font-weight: 850;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .ops-panel {
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    background: rgba(255, 253, 248, 0.88);
+    box-shadow: 0 24px 60px rgba(20, 33, 61, 0.12);
+  }
+
+  .ops-button-primary {
+    border-radius: 12px;
+    background: var(--ink);
+    color: #fffdf8;
+    font-weight: 850;
+    box-shadow: 0 10px 20px rgba(20, 33, 61, 0.18);
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+
+  .ops-button-primary:hover {
+    background: #243452;
+    transform: translateY(-1px);
+    box-shadow: 0 14px 28px rgba(20, 33, 61, 0.22);
+  }
+
+  .ops-button-signal {
+    border-radius: 12px;
+    background: var(--signal);
+    color: #111827;
+    font-weight: 900;
+    box-shadow: 0 12px 24px rgba(154, 107, 0, 0.16);
+    transition: transform .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+
+  .ops-button-signal:hover {
+    background: #ffd866;
+    transform: translateY(-1px);
+    box-shadow: 0 16px 32px rgba(154, 107, 0, 0.2);
   }
 }
 
 @layer utilities {
-  .glass-panel {
-    background: rgba(255, 255, 255, 0.85);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(226, 232, 240, 0.8);
+  .scrollbar-thin::-webkit-scrollbar { width: 8px; height: 8px; }
+  .scrollbar-thin::-webkit-scrollbar-track { background: transparent; }
+  .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(20, 33, 61, 0.22); border-radius: 999px; }
+  .scrollbar-thin::-webkit-scrollbar-thumb:hover { background: rgba(20, 33, 61, 0.38); }
+
+  .dispatch-grid {
+    background:
+      radial-gradient(circle at 18% 12%, rgba(245, 197, 66, 0.16), transparent 18rem),
+      radial-gradient(circle at 92% 18%, rgba(91, 189, 214, 0.14), transparent 20rem),
+      linear-gradient(135deg, rgba(255,253,248,0.92), rgba(238,245,255,0.84));
   }
 
-  /* Scrollbar styling for sidebar and content */
-  .scrollbar-thin::-webkit-scrollbar {
-    width: 4px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-track {
-    background: transparent;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb {
-    background: rgba(148, 163, 184, 0.3);
-    border-radius: 4px;
-  }
-  .scrollbar-thin::-webkit-scrollbar-thumb:hover {
-    background: rgba(148, 163, 184, 0.5);
+  .zebra-alert {
+    background-image: repeating-linear-gradient(135deg, rgba(255,107,87,.14) 0 8px, transparent 8px 16px);
   }
 }
+
+/* Re-skin incumbent hard-coded Tailwind classes across existing pages. */
+.bg-\[\#080B09\], .bg-\[\#1a231d\] { background-color: #f1eadc !important; }
+.bg-\[\#121815\] { background-color: rgba(255, 253, 248, 0.92) !important; }
+.bg-\[\#0d120f\], .bg-\[\#0d1410\], .bg-\[\#1a231d\]\/50, .bg-\[\#1a231d\] { background-color: #eef5ff !important; }
+.bg-\[\#00D68F\] { background-color: #f5c542 !important; }
+.bg-\[\#00D68F\]\/10, .bg-\[\#00D68F\]\/20, .bg-\[\#00D68F\]\/10\/50, .bg-\[\#00D68F\]\/10\/70 { background-color: rgba(245, 197, 66, 0.18) !important; }
+.bg-slate-900, .bg-slate-800 { background-color: #14213d !important; }
+.bg-slate-200 { background-color: #e5edf7 !important; }
+.border-\[\#1e2923\], .border-\[\#233028\], .border-slate-300 { border-color: #d6deea !important; }
+.border-\[\#00D68F\]\/10, .border-\[\#00D68F\]\/20, .border-\[\#00D68F\]\/30 { border-color: rgba(154, 107, 0, 0.24) !important; }
+.text-white { color: #14213d !important; }
+.text-slate-200, .text-slate-300 { color: #34425f !important; }
+.text-slate-400, .text-slate-500 { color: #65718b !important; }
+.text-\[\#00D68F\], .text-\[\#00e89b\] { color: #9a6b00 !important; }
+.text-\[\#041a12\] { color: #111827 !important; }
+.shadow-card, .shadow-elevated, .shadow-subtle { box-shadow: 0 14px 34px rgba(20, 33, 61, 0.1) !important; }
+.rounded-\[2rem\] { border-radius: 18px !important; }
+
+@media (max-width: 768px) {
+  .dashboard-content {
+    padding: 4.5rem 1rem 1.25rem;
+  }
+
+  .page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+}
+.bg-slate-900.text-white, .bg-slate-800.text-white { color: #fffdf8 !important; }

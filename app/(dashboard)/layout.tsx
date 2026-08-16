@@ -34,7 +34,7 @@ export default async function DashboardLayout({
     .single();
 
   return (
-    <div className="flex min-h-screen bg-transparent">
+    <div className="flex min-h-screen bg-transparent dispatch-grid">
       <Sidebar
         userProfile={{
           name: userProfile?.name || 'User',
@@ -44,7 +44,7 @@ export default async function DashboardLayout({
         }}
       />
       {/* Main content area — offset by sidebar width on desktop */}
-      <main className="flex-1 min-h-screen md:ml-[260px] overflow-y-auto">
+      <main className="flex-1 min-h-screen md:ml-[284px] overflow-y-auto">
         {children}
       </main>
     </div>

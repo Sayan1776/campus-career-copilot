@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth } from '@/lib/firebase/admin';
 import { supabaseAdmin } from '@/lib/supabase/server';
-import { generateSkillJourney, JourneyStep } from '@/lib/groq/client';
+import { generateSkillJourney, JourneyStep } from '@/lib/ai/client';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';

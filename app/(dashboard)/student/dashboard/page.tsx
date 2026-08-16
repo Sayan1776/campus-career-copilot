@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { adminAuth } from '@/lib/firebase/admin';
 import { supabaseAdmin } from '@/lib/supabase/server';
 import SkillRadarChart from './SkillRadarChart';
+import CompetencyList from '@/components/CompetencyList';
 import { redirect } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
@@ -188,16 +189,7 @@ export default async function StudentDashboard() {
                   <h2 className="text-xs font-bold uppercase tracking-wider text-slate-500 mb-2">
                     Extracted Technical Competencies ({latest.extracted_skills?.length || 0})
                   </h2>
-                  <div className="flex flex-wrap gap-1.5">
-                    {(latest.extracted_skills || []).map((skill: string) => (
-                      <span
-                        key={skill}
-                        className="rounded-lg border border-[#00D68F]/10 bg-[#00D68F]/10/70 px-2.5 py-1 text-xs font-medium text-[#00e89b]"
-                      >
-                        {skill}
-                      </span>
-                    ))}
-                  </div>
+                  <CompetencyList skills={latest.extracted_skills || []} />
                 </div>
 
                 {/* Radar Chart */}

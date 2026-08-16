@@ -25,7 +25,7 @@ graph TD
     end
 
     subgraph Platform Core
-        ResumeEngine["⚡ Groq AI Resume & Gap Engine"]
+        ResumeEngine["⚡ Gemini AI Resume & Gap Engine"]
         PeerHub["👥 Campus Peer Progress Hub"]
         Journeys["🗺️ Gamified Skill Journeys"]
         CohortView["📈 Cohort Diagnostics & FCM Dispatch"]
@@ -50,7 +50,7 @@ graph TD
 - **Framework**: [Next.js 14](https://nextjs.org/) (App Router, Server Components & Route Handlers)
 - **Database & Storage**: [Supabase](https://supabase.com/) (PostgreSQL with RLS & migrations)
 - **Authentication & Push Notifications**: [Firebase Auth](https://firebase.google.com/products/auth) (Custom Role Claims) & [Firebase Cloud Messaging (FCM)](https://firebase.google.com/products/cloud-messaging)
-- **AI / LLM Engine**: [Groq SDK](https://groq.com/) (`llama-3.3-70b-versatile`) with structured JSON schema outputs
+- **AI / LLM Engine**: [Google Gemini](https://ai.google.dev/) (`gemini-3.5-flash-lite`) for fast JSON evaluation and LaTeX generation
 - **Analytics & Visualizations**: [Recharts](https://recharts.org/) (Radar competency charts & horizontal gap distributions)
 - **Mapping & Geolocation**: [Leaflet](https://leafletjs.com/) & [React-Leaflet](https://react-leaflet.js.org/) (Campus drive tracker)
 - **Styling**: [Tailwind CSS](https://tailwindcss.com/)
@@ -61,6 +61,7 @@ graph TD
 
 ### 🎓 1. For Students (`/student/*`)
 - **Instant AI Resume Evaluation**: Upload a PDF resume to receive a placement readiness score (0–100), extracted competencies, and a 360° competency radar chart.
+- **AI Resume Builder**: Don't have a resume? Fill out a dynamic form to instantly generate a professional, compilable LaTeX resume from scratch.
 - **Skill Journeys**: Start interactive AI quests for any missing technical skill. Complete concept readings, practical code tasks, and interactive quizzes to mark gaps as **Mastered**.
 - **Peer Benchmark**: Compare readiness with departmental peers to form study circles.
 
@@ -110,8 +111,9 @@ NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
 NEXT_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
 SUPABASE_SERVICE_ROLE_KEY=your_service_role_key
 
-# Groq AI
-GROQ_API_KEY=gsk_your_groq_key
+# Gemini AI
+GEMINI_API_KEY=your_gemini_key
+GEMINI_RESUME_BUILDER_API_KEY=your_gemini_resume_builder_key
 
 # Invite Codes
 STUDENT_INVITE_CODE=STUDENT2026
