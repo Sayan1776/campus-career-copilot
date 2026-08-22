@@ -1,16 +1,19 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useMemo } from 'react';
+import { CheckCircle2 } from 'lucide-react';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Sheet, TitleBlock } from '@/components/ui/Sheet';
+import { Field, Input, Select } from '@/components/ui/Field';
+import { Button } from '@/components/ui/Button';
+import { Skeleton } from '@/components/ui/Skeleton';
+import { DEPARTMENTS, getRolesForDepartment } from '@/lib/departments';
+import { multiFactor } from 'firebase/auth';
+import { auth } from '@/lib/firebase/client';
+import nextDynamic from 'next/dynamic';
 
-const DEPARTMENTS = [
-  'Computer Science',
-  'Electronics',
-  'Mechanical',
-  'Civil',
-  'Information Technology',
-  'Electrical',
-  'Other',
-];
+const TwoFactorSetup = nextDynamic(() => import('@/components/auth/TwoFactorSetup'), { ssr: false });
+
 
 interface ProfileData {
   name: string;
@@ -28,11 +31,12 @@ export default function SettingsPage() {
   const [error, setError] = useState('');
 
   const [name, setName] = useState('');
-  const [department, setDepartment] = useState('Computer Science');
+  const [department, setDepartment] = useState('');
   const [batchYear, setBatchYear] = useState<number>(2026);
   const [targetRole, setTargetRole] = useState('');
   const [githubUrl, setGithubUrl] = useState('');
   const [linkedinUrl, setLinkedinUrl] = useState('');
+  const [isMfaEnrolled, setIsMfaEnrolled] = useState(false);
 
   useEffect(() => {
     async function loadProfile() {
@@ -41,11 +45,17 @@ export default function SettingsPage() {
         if (!res.ok) throw new Error('Failed to load profile');
         const data: ProfileData = await res.json();
         setName(data.name || '');
-        setDepartment(data.department || 'Computer Science');
+        setDepartment(data.department || '');
         setBatchYear(data.batch_year || 2026);
         setTargetRole(data.target_role || '');
         setGithubUrl(data.github_url || '');
         setLinkedinUrl(data.linkedin_url || '');
+        // Check Firebase MFA enrollment status
+        const user = auth.currentUser;
+        if (user) {
+          const enrolled = multiFactor(user).enrolledFactors.length > 0;
+          setIsMfaEnrolled(enrolled);
+        }
       } catch (err: any) {
         setError(err.message);
       } finally {
@@ -54,6 +64,8 @@ export default function SettingsPage() {
     }
     loadProfile();
   }, []);
+
+  const suggestedRoles = useMemo(() => getRolesForDepartment(department), [department]);
 
   async function handleSave(e: React.FormEvent) {
     e.preventDefault();
@@ -91,81 +103,151 @@ export default function SettingsPage() {
 
   if (loading) {
     return (
-      <div className="dashboard-content">
-        <div className="flex items-center justify-center py-20">
-          <div className="h-8 w-8 animate-spin rounded-full border-2 border-indigo-600 border-t-transparent" />
+      <div className="page-canvas" aria-busy="true">
+        <div className="border-b border-ink-line pb-5">
+          <Skeleton className="h-8 w-48" />
         </div>
+        <Sheet className="overflow-hidden">
+          <Skeleton className="m-4 h-5 w-40" />
+          <div className="grid grid-cols-1 gap-5 px-5 pb-5 md:grid-cols-2">
+            {Array.from({ length: 4 }).map((_, i) => (
+              <div key={i} className="space-y-2">
+                <Skeleton className="h-3 w-24" />
+                <Skeleton className="h-10 w-full rounded-lg" />
+              </div>
+            ))}
+          </div>
+        </Sheet>
       </div>
     );
   }
 
   return (
-    <div className="dashboard-content">
-      <div className="page-header">
-        <div>
-          <h1>Settings</h1>
-          <p>Manage your profile information</p>
-        </div>
-      </div>
+    <div className="page-canvas">
+      <PageHeader
+        title="Settings"
+        sub="Manage your profile information — it feeds the directory."
+        meta="Sheet ST-06"
+      />
 
       {success && (
-        <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-4 py-3 text-sm font-medium text-emerald-800 flex items-center gap-2">
-          <svg className="h-4 w-4 flex-shrink-0" fill="none" viewBox="0 0 24 24" strokeWidth={2} stroke="currentColor">
-            <path strokeLinecap="round" strokeLinejoin="round" d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-          </svg>
+        <div
+          role="status"
+          className="flex items-center gap-2 rounded-lg border border-pass/40 bg-pass-wash px-4 py-3 text-sm font-medium text-pass-deep"
+        >
+          <CheckCircle2 className="h-4 w-4 shrink-0" strokeWidth={2} />
           Profile updated successfully
         </div>
       )}
 
       {error && (
-        <div className="rounded-xl border border-rose-200 bg-rose-50 px-4 py-3 text-sm font-medium text-rose-800">
+        <div
+          role="alert"
+          className="rounded-lg border border-instrument/40 bg-instrument-wash px-4 py-3 text-sm font-medium text-instrument-deep"
+        >
           {error}
         </div>
       )}
 
-      <form onSubmit={handleSave} className="bento-card">
-        <h2 className="text-sm font-bold text-white mb-6 pb-4 border-b border-[#233028]">
-          Profile Information
-        </h2>
+      <form onSubmit={handleSave}>
+        <Sheet className="overflow-hidden">
+          <TitleBlock title="Profile information" meta="Station record" />
+          <div className="px-5 py-5 md:px-6">
+            <div className="grid grid-cols-1 gap-5 md:grid-cols-2">
+              <Field label="Full name" htmlFor="profile-name">
+                <Input
+                  id="profile-name"
+                  type="text"
+                  value={name}
+                  onChange={(e) => setName(e.target.value)}
+                  placeholder="Your full name"
+                  required
+                />
+              </Field>
+              <Field label="Department" htmlFor="profile-dept">
+                <Select
+                  id="profile-dept"
+                  value={department}
+                  onChange={(e) => setDepartment(e.target.value)}
+                >
+                  {DEPARTMENTS.map((d) => (
+                    <option key={d} value={d}>
+                      {d}
+                    </option>
+                  ))}
+                </Select>
+              </Field>
+              <Field label="Batch year" htmlFor="profile-batch">
+                <Input
+                  id="profile-batch"
+                  type="number"
+                  value={batchYear}
+                  onChange={(e) => setBatchYear(parseInt(e.target.value, 10) || 2026)}
+                  min={2020}
+                  max={2035}
+                />
+              </Field>
+              <Field label="Target career role" htmlFor="profile-role">
+                <Input
+                  id="profile-role"
+                  type="text"
+                  value={targetRole}
+                  onChange={(e) => setTargetRole(e.target.value)}
+                  placeholder="e.g. Design Engineer, Process Engineer"
+                  list="suggested-roles"
+                />
+                <datalist id="suggested-roles">
+                  {suggestedRoles.map((r) => (
+                    <option key={r} value={r} />
+                  ))}
+                </datalist>
+              </Field>
+            </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
-          <div>
-            <label htmlFor="profile-name" className="form-label">Full Name</label>
-            <input id="profile-name" type="text" value={name} onChange={(e) => setName(e.target.value)} placeholder="Your full name" className="form-input" />
-          </div>
-          <div>
-            <label htmlFor="profile-dept" className="form-label">Department</label>
-            <select id="profile-dept" value={department} onChange={(e) => setDepartment(e.target.value)} className="form-select">
-              {DEPARTMENTS.map((d) => (<option key={d} value={d}>{d}</option>))}
-            </select>
-          </div>
-          <div>
-            <label htmlFor="profile-batch" className="form-label">Batch Year</label>
-            <input id="profile-batch" type="number" value={batchYear} onChange={(e) => setBatchYear(parseInt(e.target.value, 10) || 2026)} min={2020} max={2035} className="form-input" />
-          </div>
-          <div>
-            <label htmlFor="profile-role" className="form-label">Target Career Role</label>
-            <input id="profile-role" type="text" value={targetRole} onChange={(e) => setTargetRole(e.target.value)} placeholder="e.g. Software Engineer" className="form-input" />
-          </div>
-        </div>
+            <div className="mt-5 grid grid-cols-1 gap-5 md:grid-cols-2">
+              <Field label="GitHub URL" htmlFor="profile-github">
+                <Input
+                  id="profile-github"
+                  type="url"
+                  value={githubUrl}
+                  onChange={(e) => setGithubUrl(e.target.value)}
+                  placeholder="https://github.com/username"
+                />
+              </Field>
+              <Field label="LinkedIn URL" htmlFor="profile-linkedin">
+                <Input
+                  id="profile-linkedin"
+                  type="url"
+                  value={linkedinUrl}
+                  onChange={(e) => setLinkedinUrl(e.target.value)}
+                  placeholder="https://linkedin.com/in/username"
+                />
+              </Field>
+            </div>
 
-        <div className="mt-5 space-y-5">
-          <div>
-            <label htmlFor="profile-github" className="form-label">GitHub URL</label>
-            <input id="profile-github" type="url" value={githubUrl} onChange={(e) => setGithubUrl(e.target.value)} placeholder="https://github.com/username" className="form-input" />
+            <div className="mt-7 flex justify-end border-t border-ink-line pt-5">
+              <Button type="submit" loading={saving}>
+                {saving ? 'Saving…' : 'Save changes'}
+              </Button>
+            </div>
           </div>
-          <div>
-            <label htmlFor="profile-linkedin" className="form-label">LinkedIn URL</label>
-            <input id="profile-linkedin" type="url" value={linkedinUrl} onChange={(e) => setLinkedinUrl(e.target.value)} placeholder="https://linkedin.com/in/username" className="form-input" />
-          </div>
-        </div>
-
-        <div className="mt-8 flex justify-end border-t border-[#233028] pt-5">
-          <button type="submit" disabled={saving} className="rounded-xl bg-[#00D68F] px-6 py-2.5 text-sm font-bold text-[#041a12] hover:bg-[#00e89b] disabled:opacity-50 transition-colors shadow-sm">
-            {saving ? 'Saving...' : 'Save Changes'}
-          </button>
-        </div>
+        </Sheet>
       </form>
+
+      {/* Security section */}
+      <Sheet className="overflow-hidden">
+        <TitleBlock
+          title="Security"
+          sub="Protect your account with a second authentication factor"
+          meta="2FA"
+        />
+        <div className="px-5 py-5 md:px-6">
+          <TwoFactorSetup
+            isEnrolled={isMfaEnrolled}
+            onEnrolled={() => setIsMfaEnrolled(true)}
+          />
+        </div>
+      </Sheet>
     </div>
   );
 }

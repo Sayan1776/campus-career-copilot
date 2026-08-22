@@ -13,36 +13,124 @@ const FIRST_NAMES = [
   'Kavya Mehta', 'Nikhil Banik', 'Riya Chatterjee',
 ];
 
-const DEPARTMENTS = [
-  'Computer Science',
-  'Information Technology',
-  'Electronics & Comm',
-  'Data Science & AI',
-];
-
-const TARGET_ROLES = [
-  'Software Engineer',
-  'Data Analyst',
-  'Data Scientist',
-  'Frontend Developer',
-  'Backend Developer',
-];
-
-const SKILL_POOL = [
-  'Python', 'JavaScript', 'React', 'Node.js', 'TypeScript', 'SQL', 'Java',
-  'Git', 'REST APIs', 'HTML/CSS', 'MongoDB', 'Pandas', 'NumPy', 'Flask',
-  'Express.js', 'Tailwind CSS',
-];
-
-const GAP_DISTRIBUTION: { skill: string; severity: 'high' | 'medium' | 'low'; count: number }[] = [
-  { skill: 'System Design & Architecture', severity: 'high', count: 14 },
-  { skill: 'Cloud Deployment (AWS/GCP)', severity: 'high', count: 12 },
-  { skill: 'SQL Query Optimization', severity: 'medium', count: 10 },
-  { skill: 'Docker & Containerization', severity: 'high', count: 9 },
-  { skill: 'Unit & Integration Testing', severity: 'medium', count: 8 },
-  { skill: 'CI/CD Pipelines', severity: 'medium', count: 7 },
-  { skill: 'Redis & Caching Strategies', severity: 'low', count: 5 },
-  { skill: 'Microservices Pattern', severity: 'low', count: 4 },
+// Demo cohort spans every major branch so TPO analytics and peer filters
+const DEPARTMENT_SEEDS: {
+  department: string;
+  slots: number;
+  skills: string[];
+  gaps: { skill: string; severity: 'high' | 'medium' | 'low' }[];
+  roles: string[];
+}[] = [
+  {
+    department: 'CSE',
+    slots: 4,
+    skills: [
+      'Python', 'JavaScript', 'React', 'Node.js', 'SQL', 'Java', 'Git',
+      'REST APIs', 'MongoDB', 'TypeScript', 'Docker', 'AWS',
+    ],
+    gaps: [
+      { skill: 'System Design & Architecture', severity: 'high' },
+      { skill: 'Cloud Deployment (AWS/GCP)', severity: 'medium' },
+      { skill: 'SQL Query Optimization', severity: 'low' },
+      { skill: 'Docker & Containerization', severity: 'medium' },
+      { skill: 'Unit & Integration Testing', severity: 'low' },
+    ],
+    roles: ['Software Engineer', 'Data Scientist', 'Frontend Developer', 'Backend Developer'],
+  },
+  {
+    department: 'ME',
+    slots: 3,
+    skills: [
+      'AutoCAD', 'SolidWorks', 'CATIA', 'MATLAB', 'ANSYS (FEA)', 'Thermodynamics',
+      'Manufacturing Processes', 'GD&T', 'CNC Programming', 'Heat Transfer',
+    ],
+    gaps: [
+      { skill: 'ANSYS Structural Analysis', severity: 'high' },
+      { skill: 'CFD Simulation (ANSYS Fluent)', severity: 'high' },
+      { skill: 'GD&T & Tolerance Analysis', severity: 'medium' },
+      { skill: 'PLC & Industrial Automation', severity: 'medium' },
+      { skill: 'Lean Manufacturing (5S/Kaizen)', severity: 'low' },
+      { skill: 'CAM Programming (Mastercam)', severity: 'low' },
+    ],
+    roles: ['Design Engineer', 'Manufacturing Engineer', 'Thermal Engineer', 'CAD/CAM Engineer'],
+  },
+  {
+    department: 'CE',
+    slots: 3,
+    skills: [
+      'AutoCAD', 'STAAD Pro', 'Revit', 'Surveying (Total Station)', 'Concrete Technology',
+      'Structural Analysis', 'Estimation & Costing', 'Primavera P6', 'ETABS',
+    ],
+    gaps: [
+      { skill: 'Advanced ETABS Modelling', severity: 'high' },
+      { skill: 'Construction Project Management (Primavera)', severity: 'high' },
+      { skill: 'Geotechnical Investigation Basics', severity: 'medium' },
+      { skill: 'BIM Workflow (Revit + Navisworks)', severity: 'medium' },
+      { skill: 'Quantity Surveying (QS)', severity: 'low' },
+    ],
+    roles: ['Site Engineer', 'Structural Engineer', 'Planning Engineer'],
+  },
+  {
+    department: 'ECE',
+    slots: 3,
+    skills: [
+      'Digital Electronics', 'Verilog', 'Embedded C', 'ARM Cortex-M', 'PCB Design (Altium)',
+      'MATLAB & Simulink', 'Communication Systems', 'IoT Protocols (MQTT)', 'Oscilloscope & Debugging',
+    ],
+    gaps: [
+      { skill: 'VLSI Design Flow (Cadence)', severity: 'high' },
+      { skill: 'RTOS (FreeRTOS)', severity: 'high' },
+      { skill: 'RF & Antenna Design Basics', severity: 'medium' },
+      { skill: 'Signal Processing (DSP)', severity: 'medium' },
+      { skill: 'Industry PCB DFM Practices', severity: 'low' },
+    ],
+    roles: ['VLSI Design Engineer', 'Embedded Systems Engineer', 'Telecom Engineer'],
+  },
+  {
+    department: 'EE',
+    slots: 2,
+    skills: [
+      'Power Systems Analysis', 'MATLAB', 'SCADA', 'PLC (Siemens)', 'Electrical CAD (ETAP)',
+      'Control Systems', 'Machine Design (Motors/Transformers)', 'Load Flow Studies',
+    ],
+    gaps: [
+      { skill: 'Power System Simulation (PSCAD/ETAP)', severity: 'high' },
+      { skill: 'Protection & Relay Coordination', severity: 'high' },
+      { skill: 'Solar PV Design & Sizing', severity: 'medium' },
+      { skill: 'Industrial Automation (PLC/SCADA Integration)', severity: 'medium' },
+      { skill: 'Energy Audit Practices', severity: 'low' },
+    ],
+    roles: ['Electrical Design Engineer', 'Power Systems Engineer'],
+  },
+  {
+    department: 'Chemical',
+    slots: 2,
+    skills: [
+      'Mass Transfer', 'Heat Transfer', 'Process Calculations', 'Aspen HYSYS', 'MS Project',
+      'Process Instrumentation', 'Thermodynamics', 'Safety (HAZOP Awareness)',
+    ],
+    gaps: [
+      { skill: 'Process Simulation (Aspen Plus)', severity: 'high' },
+      { skill: 'P&ID Development', severity: 'high' },
+      { skill: 'Process Safety & HAZOP', severity: 'medium' },
+      { skill: 'Plant Utilities & Utilities Balance', severity: 'low' },
+    ],
+    roles: ['Process Engineer', 'Petrochemical Engineer'],
+  },
+  {
+    department: 'IT',
+    slots: 1,
+    skills: [
+      'Java', 'Python', 'SQL', 'Linux Administration', 'Computer Networks', 'Cloud Basics (AWS)',
+      'Git', 'Bash Scripting',
+    ],
+    gaps: [
+      { skill: 'Network Design (CCNA-level)', severity: 'high' },
+      { skill: 'Cloud Deployment (AWS/GCP)', severity: 'medium' },
+      { skill: 'ITIL & Ticketing Workflows', severity: 'low' },
+    ],
+    roles: ['Systems Analyst'],
+  },
 ];
 
 function shuffledIndices(n: number): number[] {
@@ -76,37 +164,46 @@ export async function POST(req: NextRequest) {
   await supabaseAdmin.from('resumes').delete().in('user_id', seedIds);
   await supabaseAdmin.from('users').delete().in('id', seedIds);
 
-  // 2. Build the per-student skill gap assignment
-  const studentGaps: { skill: string; severity: string }[][] = Array.from(
-    { length: studentCount },
-    () => []
-  );
-
-  for (const gap of GAP_DISTRIBUTION) {
-    const chosen = shuffledIndices(studentCount).slice(0, gap.count);
-    for (const idx of chosen) {
-      studentGaps[idx].push({ skill: gap.skill, severity: gap.severity });
+  // 2. Assign each student to a department slot, then draw that
+  // department's skills/gaps/roles for them
+  const roster = FIRST_NAMES.map((name, i) => {
+    let cursor = 0;
+    let seed = DEPARTMENT_SEEDS[0];
+    for (const deptSeed of DEPARTMENT_SEEDS) {
+      if (i < cursor + deptSeed.slots) {
+        seed = deptSeed;
+        break;
+      }
+      cursor += deptSeed.slots;
     }
-  }
+    const deptIndex = i - cursor; // position within the department's students
+    return {
+      name,
+      department: seed.department,
+      targetRole: seed.roles[deptIndex % seed.roles.length],
+      skills: randomSubset(seed.skills, 6, 10),
+      gaps: randomSubset(seed.gaps, 2, 3),
+    };
+  });
 
   // 3. Build users
-  const users = FIRST_NAMES.map((name, i) => ({
+  const users = roster.map((s, i) => ({
     id: `${SEED_PREFIX}${i + 1}`,
     role: 'student' as const,
-    name,
-    department: DEPARTMENTS[i % DEPARTMENTS.length],
+    name: s.name,
+    department: s.department,
     batch_year: 2026,
-    target_role: TARGET_ROLES[i % TARGET_ROLES.length],
+    target_role: s.targetRole,
     opted_in_recruiter: Math.random() > 0.25,
   }));
 
   // 4. Build resumes
-  const resumes = FIRST_NAMES.map((_, i) => ({
+  const resumes = roster.map((s, i) => ({
     user_id: `${SEED_PREFIX}${i + 1}`,
     file_url: `seed_resume_${i + 1}.pdf`,
     overall_score: 60 + Math.floor(Math.random() * 35), // 60-95
-    extracted_skills: randomSubset(SKILL_POOL, 6, 10),
-    skill_gaps: studentGaps[i],
+    extracted_skills: s.skills,
+    skill_gaps: s.gaps,
     status: 'complete' as const,
   }));
 
@@ -122,12 +219,11 @@ export async function POST(req: NextRequest) {
 
   // 5. Seed sample Skill Journeys
   const sampleJourneys: any[] = [];
-  FIRST_NAMES.forEach((_, i) => {
+  roster.forEach((s, i) => {
     const studentId = `${SEED_PREFIX}${i + 1}`;
-    const gaps = studentGaps[i];
-    if (gaps.length > 0) {
+    if (s.gaps.length > 0) {
       // Create 1 or 2 journeys for this student
-      const gapToTake = gaps[0];
+      const gapToTake = s.gaps[0];
       const isCompleted = i % 3 === 0;
       sampleJourneys.push({
         user_id: studentId,
@@ -138,29 +234,37 @@ export async function POST(req: NextRequest) {
             stepNumber: 1,
             type: 'concept',
             title: `Foundations of ${gapToTake.skill}`,
-            description: 'Core concepts and architecture overview',
-            content: `Key concepts regarding ${gapToTake.skill} essential for campus technical placement rounds.`,
+            description: 'Core concepts, industry overview, and GitHub notes',
+            content: `Key concepts regarding ${gapToTake.skill} essential for ${s.department} campus placement rounds.`,
             completed: true,
           },
           {
             stepNumber: 2,
-            type: 'challenge',
-            title: `Hands-on Project on ${gapToTake.skill}`,
-            description: 'Practical implementation task',
-            content: `Build and run a micro project utilizing ${gapToTake.skill}.`,
+            type: 'course',
+            title: `Recommended Course`,
+            description: `Reputable online course for ${gapToTake.skill}`,
+            content: `Complete a foundational course from providers like Coursera or Udemy to solidify your knowledge.`,
             completed: isCompleted,
           },
           {
             stepNumber: 3,
+            type: 'challenge',
+            title: `Hands-on Project on ${gapToTake.skill}`,
+            description: 'Practical implementation task',
+            content: `Build and run a mini project utilizing ${gapToTake.skill}.`,
+            completed: isCompleted,
+          },
+          {
+            stepNumber: 4,
             type: 'quiz',
             title: 'Knowledge Assessment',
-            description: 'Verification quiz questions',
-            content: 'Self-assessment questions.',
+            description: 'Full MCQ Exam',
+            content: 'Self-assessment questions to test your proficiency.',
             completed: isCompleted,
           },
         ],
-        completed_steps: isCompleted ? 3 : 1,
-        total_steps: 3,
+        completed_steps: isCompleted ? 4 : 1,
+        total_steps: 4,
         status: isCompleted ? 'completed' : 'in_progress',
       });
     }
@@ -175,13 +279,15 @@ export async function POST(req: NextRequest) {
     }
   }
 
-  // 6. Seed company visits
+  // 6. Seed company visits — drives from across sectors, not just tech
   await supabaseAdmin.from('company_visits').delete().neq('id', '00000000-0000-0000-0000-000000000000');
   const companyVisits = [
-    { company_name: 'Microsoft Campus Drive', visit_date: '2026-09-15', location_lat: 22.5958, location_lng: 88.4497 },
-    { company_name: 'Google Placement Visit', visit_date: '2026-09-22', location_lat: 22.5354, location_lng: 88.3524 },
-    { company_name: 'Amazon Placement Drive', visit_date: '2026-10-03', location_lat: 22.6142, location_lng: 88.4340 },
-    { company_name: 'TCS Digital Innovation', visit_date: '2026-10-14', location_lat: 22.5726, location_lng: 88.3639 },
+    { company_name: 'Microsoft Campus Drive (CSE/IT)', visit_date: '2026-09-15', location_lat: 22.5958, location_lng: 88.4497 },
+    { company_name: 'L&T Construction Drive (Civil/Mech)', visit_date: '2026-09-22', location_lat: 22.5354, location_lng: 88.3524 },
+    { company_name: 'Tata Steel Engineering Drive (Mech/Electrical)', visit_date: '2026-10-03', location_lat: 22.6142, location_lng: 88.4340 },
+    { company_name: 'Siemens Automation Drive (Electrical/ECE)', visit_date: '2026-10-08', location_lat: 22.5726, location_lng: 88.3639 },
+    { company_name: 'Reliance Process Engineer Drive (Chemical)', visit_date: '2026-10-14', location_lat: 22.5244, location_lng: 88.3214 },
+    { company_name: 'TCS Digital Innovation (All Branches)', visit_date: '2026-10-20', location_lat: 22.5489, location_lng: 88.3927 },
   ];
   await supabaseAdmin.from('company_visits').insert(companyVisits);
 

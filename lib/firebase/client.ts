@@ -1,18 +1,9 @@
-// Client-side Firebase init. Used in browser components for login/signup
-// and for reading the ID token (which carries the role custom claim).
+// Client-side Firebase Auth handle. Only login/signup and the sidebar's
+// lazy sign-out import this — importing it anywhere else drags the auth
+// SDK into that page's bundle.
 
-import { initializeApp, getApps, getApp } from 'firebase/app';
 import { getAuth } from 'firebase/auth';
+import { firebaseApp } from '@/lib/firebase/app';
 
-const firebaseConfig = {
-  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
-  authDomain: process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN,
-  projectId: process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID,
-  storageBucket: process.env.NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET,
-  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_MESSAGING_SENDER_ID,
-  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
-};
-
-// Avoid re-initializing on hot reload
-export const firebaseApp = getApps().length ? getApp() : initializeApp(firebaseConfig);
+export { firebaseApp };
 export const auth = getAuth(firebaseApp);

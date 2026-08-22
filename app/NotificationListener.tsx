@@ -1,11 +1,18 @@
 'use client';
 
 import { useEffect } from 'react';
-import { listenForForegroundMessages } from '@/lib/firebase/messaging';
 
 export default function NotificationListener() {
   useEffect(() => {
-    listenForForegroundMessages();
+    let active = true;
+    // Loaded lazily so the FCM SDK stays out of the dashboard's initial
+    // bundle — it attaches shortly after hydration instead.
+    import('@/lib/firebase/messaging').then((mod) => {
+      if (active) mod.listenForForegroundMessages();
+    });
+    return () => {
+      active = false;
+    };
   }, []);
 
   return null;

@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <rect width="64" height="64" rx="12" fill="#FAFBFC"/>
+  <g stroke="#D7E0EC" stroke-width="1">
+    <path d="M16 4v56M32 4v56M48 4v56M4 16h56M4 32h56M4 48h56"/>
+  </g>
+  <rect x="5" y="5" width="54" height="54" rx="10" fill="#FFFFFF" stroke="#16233B" stroke-width="3"/>
+  <text x="31" y="40" font-family="ui-monospace, 'IBM Plex Mono', Menlo, monospace" font-size="21" font-weight="700" fill="#16233B" text-anchor="middle">CC</text>
+  <rect x="47" y="9" width="8" height="8" fill="#E8501A"/>
+</svg>

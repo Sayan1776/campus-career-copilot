@@ -30,13 +30,18 @@ export interface ResumeAnalysis {
 }
 
 const SYSTEM_PROMPT_RESUME = `You are a resume analysis engine for a campus placement platform.
-Given a resume's raw text and a target job role, evaluate the resume and return a JSON object.
+Given a resume's raw text, the student's engineering department (branch of
+study), and a target job role, evaluate the resume and return a JSON object.
 
 Score based on: relevance to target role, clarity, quantified impact,
 project depth, and completeness. skill_gaps should list skills expected
 for the target role that are missing or weak in the resume, ranked by
-severity. Be specific with skill names (e.g. "System Design", "SQL
-optimization"), not generic ones.`;
+severity. Evaluate the student against the standards employers apply when
+hiring graduates of the given department for that role — the expected
+skills differ sharply by branch (e.g. CAD and FEA tools for Mechanical,
+STAAD Pro and site planning for Civil, VLSI and embedded toolchains for
+Electronics, SQL and system design for CSE). Be specific
+with skill and tool names actually used in that industry, not generic ones.`;
 
 const resumeSchema: Schema = {
   type: SchemaType.OBJECT,
@@ -66,7 +71,8 @@ const resumeSchema: Schema = {
 
 export async function analyzeResume(
   resumeText: string,
-  targetRole: string
+  targetRole: string,
+  department?: string | null
 ): Promise<ResumeAnalysis> {
   const model = getGenAI().getGenerativeModel({
     model: 'gemini-3.5-flash-lite',
@@ -78,7 +84,7 @@ export async function analyzeResume(
     },
   });
 
-  const prompt = `Target role: ${targetRole}\n\nResume text:\n${resumeText.slice(0, 12000)}`;
+  const prompt = `Department (branch of study): ${department || 'Not specified'}\nTarget role: ${targetRole}\n\nResume text:\n${resumeText.slice(0, 12000)}`;
   
   const result = await model.generateContent(prompt);
   const raw = result.response.text();
@@ -118,13 +124,23 @@ export interface GeneratedJourney {
   steps: JourneyStep[];
 }
 
-const JOURNEY_SYSTEM_PROMPT = `You are an expert technical mentor and placement coach for college students.
-Given a target skill and the student's target career role, generate a comprehensive 3-step learning journey to help them master this skill gap.
-CRITICAL: For the "resourceLinks", you MUST generate YouTube SEARCH URLs, not direct video links.
+const JOURNEY_SYSTEM_PROMPT = `You are an expert technical mentor and placement coach for college students
+across every engineering department (CSE, ME, CE, EE, ECE, Chemical, and others).
+Given a target skill, the student's department, and their target career
+role, generate a comprehensive 4-step learning journey to help them master
+this skill gap. All explanations, examples, and resources must be relevant
+to the student's branch and target industry.
+
+The 4 steps MUST strictly follow this structure:
+Step 1 ("concept"): Introduction, foundation, and provide notes/links from GitHub about the particular skill.
+Step 2 ("course"): Recommend completing one specific course related to the skill from a reputable provider (e.g. Coursera, Udemy, edX). Include a link to the course or provider.
+Step 3 ("challenge"): A practical implementation task or project.
+Step 4 ("quiz"): A full exam of Multiple Choice Questions (generate 5-10 questions) to thoroughly test the skill.
+
+CRITICAL: For video "resourceLinks", you MUST generate YouTube SEARCH URLs, not direct video links.
 Format: https://www.youtube.com/results?search_query=<url-encoded+search+terms>
-Example: https://www.youtube.com/results?search_query=python+data+structures+tutorial
-Do NOT generate direct youtube.com/watch links — you cannot verify they exist.
-Also include links to official documentation (MDN, docs.python.org, etc.) where relevant.
+Do NOT generate direct youtube.com/watch links.
+You may generate direct links to official documentation, GitHub repositories, or reputable course providers (e.g. coursera.org, udemy.com).
 Ensure the JSON matches the requested schema exactly.`;
 
 const journeySchema: Schema = {
@@ -139,7 +155,7 @@ const journeySchema: Schema = {
         type: SchemaType.OBJECT,
         properties: {
           stepNumber: { type: SchemaType.INTEGER },
-          type: { type: SchemaType.STRING, description: 'Must be "concept", "challenge", or "quiz"' },
+          type: { type: SchemaType.STRING, description: 'Must be "concept", "course", "challenge", or "quiz"' },
           title: { type: SchemaType.STRING },
           description: { type: SchemaType.STRING },
           content: { type: SchemaType.STRING, description: 'Detailed content, paragraphs' },
@@ -181,7 +197,8 @@ const journeySchema: Schema = {
 
 export async function generateSkillJourney(
   skill: string,
-  targetRole: string = 'Software Engineer'
+  targetRole: string,
+  department?: string | null
 ): Promise<GeneratedJourney> {
   const model = getGenAI().getGenerativeModel({
     model: 'gemini-3.5-flash-lite',
@@ -193,7 +210,7 @@ export async function generateSkillJourney(
     },
   });
 
-  const prompt = `Target Skill: ${skill}\nTarget Role: ${targetRole}\nGenerate a practical, actionable placement-focused journey with YouTube resource links.`;
+  const prompt = `Target Skill: ${skill}\nStudent Department: ${department || 'Not specified'}\nTarget Role: ${targetRole}\nGenerate a practical, actionable placement-focused journey for a student of this department, with resource links relevant to this branch and industry.`;
 
   const result = await model.generateContent(prompt);
   const raw = result.response.text();

@@ -2,6 +2,15 @@
 
 import { useState, useMemo } from 'react';
 import Link from 'next/link';
+import { Search, Crosshair, Users } from 'lucide-react';
+import { PageHeader } from '@/components/ui/PageHeader';
+import { Stat } from '@/components/ui/Stat';
+import { Sheet, TitleBlock } from '@/components/ui/Sheet';
+import { Badge } from '@/components/ui/Badge';
+import { Input, Select } from '@/components/ui/Field';
+import { EmptyState } from '@/components/ui/EmptyState';
+import { buttonClasses } from '@/components/ui/Button';
+import { cn } from '@/lib/cn';
 
 export interface PeerStudent {
   id: string;
@@ -22,17 +31,21 @@ interface Props {
   userRole: string;
 }
 
+function scoreTone(score: number): 'pass' | 'ink' | 'warn' {
+  if (score >= 75) return 'pass';
+  if (score >= 50) return 'ink';
+  return 'warn';
+}
+
 export default function PeerProgressClient({ students, userRole }: Props) {
   const [searchTerm, setSearchTerm] = useState('');
   const [deptFilter, setDeptFilter] = useState('all');
   const [roleFilter, setRoleFilter] = useState('all');
   const [sortBy, setSortBy] = useState<'score' | 'skills' | 'journeys'>('score');
-  const [selectedStudent, setSelectedStudent] = useState<PeerStudent | null>(null);
 
-  // Extract unique departments & roles for dropdowns
   const departments = useMemo(() => {
-    const set = new Set(students.map((s) => s.department || 'Computer Science'));
-    return Array.from(set).filter(Boolean);
+    const set = new Set(students.map((s) => s.department).filter(Boolean));
+    return Array.from(set) as string[];
   }, [students]);
 
   const targetRoles = useMemo(() => {
@@ -40,7 +53,6 @@ export default function PeerProgressClient({ students, userRole }: Props) {
     return Array.from(set);
   }, [students]);
 
-  // Filter and sort students
   const filteredStudents = useMemo(() => {
     return students
       .filter((s) => {
@@ -72,248 +84,195 @@ export default function PeerProgressClient({ students, userRole }: Props) {
     0
   );
 
+  // Role-aware station link — a TPO shouldn't bounce off /student.
+  const myDashboardHref =
+    userRole === 'TPO'
+      ? '/tpo/dashboard'
+      : '/student/dashboard';
+
   return (
-    <div className="dashboard-content">
-        {/* Page Header */}
-        <div className="mb-6 border-b border-[#1e2923] pb-5">
-          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
-            <div>
-              <div className="flex items-center gap-2">
-                <h1 className="text-2xl font-bold text-white">Campus Peer Progress Hub</h1>
-                <span className="rounded-full bg-emerald-100 px-2.5 py-0.5 text-xs font-semibold text-emerald-800">
-                  Institution Live Directory
-                </span>
-              </div>
-              <p className="mt-1 text-sm text-slate-500">
-                Transparent view of campus cohorts, skill readiness benchmarks, and peer learning progress.
-              </p>
-            </div>
-            <div className="flex gap-2">
-              <Link
-                href="/student/dashboard"
-                className="rounded-lg border border-slate-300 bg-[#121815] px-3 py-1.5 text-xs font-semibold text-slate-300 hover:bg-[#1a231d] shadow-subtle"
-              >
-                My Dashboard
-              </Link>
-            </div>
+    <>
+      <PageHeader
+        title="Peer progress hub"
+        sub="Transparent view of campus cohorts, skill readiness benchmarks, and peer learning progress."
+        meta="Sheet PH-04 · Live directory"
+        actions={
+          <Link href={myDashboardHref} className={buttonClasses({ variant: 'ghost', size: 'sm' })}>
+            My dashboard
+          </Link>
+        }
+      />
+
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        <Stat label="Enrolled cohort" value={students.length} sub="Students on the sheet" />
+        <Stat label="Batch avg readiness" value={avgScore} unit="/100" />
+        <Stat label="Gaps resolved" value={totalJourneysCompleted} sub="Via learning journeys" />
+        <Stat label="Departments" value={departments.length} sub="Active in this directory" />
+      </div>
+
+      <Sheet className="overflow-hidden">
+        <TitleBlock title="Directory controls" sub="Search by student, skill, or target role" meta={`${filteredStudents.length} shown`} />
+        <div className="grid grid-cols-1 gap-3 px-4 py-4 sm:grid-cols-12">
+          <div className="relative sm:col-span-5">
+            <label htmlFor="peer-search" className="mb-1.5 block font-mono text-xxs font-medium uppercase tracking-[0.08em] text-ink-faint">
+              Search students or skills
+            </label>
+            <Search className="pointer-events-none absolute left-2.5 top-[2.28rem] h-4 w-4 text-ink-faint" strokeWidth={1.8} />
+            <Input
+              id="peer-search"
+              type="text"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              placeholder="e.g. Rahul, React, Backend…"
+              className="pl-8"
+            />
+          </div>
+
+          <div className="sm:col-span-3">
+            <label htmlFor="peer-dept" className="mb-1.5 block font-mono text-xxs font-medium uppercase tracking-[0.08em] text-ink-faint">
+              Department
+            </label>
+            <Select id="peer-dept" value={deptFilter} onChange={(e) => setDeptFilter(e.target.value)}>
+              <option value="all">All departments ({students.length})</option>
+              {departments.map((d) => (
+                <option key={d} value={d}>
+                  {d}
+                </option>
+              ))}
+            </Select>
+          </div>
+
+          <div className="sm:col-span-2">
+            <label htmlFor="peer-role" className="mb-1.5 block font-mono text-xxs font-medium uppercase tracking-[0.08em] text-ink-faint">
+              Target role
+            </label>
+            <Select id="peer-role" value={roleFilter} onChange={(e) => setRoleFilter(e.target.value)}>
+              <option value="all">All roles</option>
+              {targetRoles.map((r) => (
+                <option key={r} value={r}>
+                  {r}
+                </option>
+              ))}
+            </Select>
+          </div>
+
+          <div className="sm:col-span-2">
+            <label htmlFor="peer-sort" className="mb-1.5 block font-mono text-xxs font-medium uppercase tracking-[0.08em] text-ink-faint">
+              Sort by
+            </label>
+            <Select id="peer-sort" value={sortBy} onChange={(e) => setSortBy(e.target.value as typeof sortBy)}>
+              <option value="score">Readiness score</option>
+              <option value="skills">Total skills</option>
+              <option value="journeys">Gaps mastered</option>
+            </Select>
           </div>
         </div>
+      </Sheet>
 
-        {/* Institution Stats Bar */}
-        <div className="mb-6 grid grid-cols-2 gap-4 sm:grid-cols-4">
-          <div className="rounded-xl border border-[#1e2923] bg-[#121815] p-4 shadow-subtle">
-            <div className="text-2xl font-bold text-white">{students.length}</div>
-            <div className="text-xs font-medium text-slate-500">Total Enrolled Cohort</div>
-          </div>
-          <div className="rounded-xl border border-[#1e2923] bg-[#121815] p-4 shadow-subtle">
-            <div className="text-2xl font-bold text-[#00D68F]">{avgScore}/100</div>
-            <div className="text-xs font-medium text-slate-500">Batch Avg. Readiness</div>
-          </div>
-          <div className="rounded-xl border border-[#1e2923] bg-[#121815] p-4 shadow-subtle">
-            <div className="text-2xl font-bold text-emerald-600">{totalJourneysCompleted}</div>
-            <div className="text-xs font-medium text-slate-500">Gaps Resolved via Journeys</div>
-          </div>
-          <div className="rounded-xl border border-[#1e2923] bg-[#121815] p-4 shadow-subtle">
-            <div className="text-2xl font-bold text-amber-600">{departments.length}</div>
-            <div className="text-xs font-medium text-slate-500">Active Departments</div>
-          </div>
-        </div>
-
-        {/* Search & Filter Controls */}
-        <div className="mb-6 rounded-xl border border-[#1e2923] bg-[#121815] p-4 shadow-card space-y-3">
-          <div className="grid grid-cols-1 gap-3 sm:grid-cols-12">
-            {/* Search Input */}
-            <div className="sm:col-span-5">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                Search Students or Skills
-              </label>
-              <input
-                type="text"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                placeholder="e.g. Rahul, React, Python, Backend..."
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-200 placeholder-slate-400 focus:border-indigo-600 focus:outline-none focus:ring-1 focus:ring-indigo-600"
-              />
-            </div>
-
-            {/* Department Filter */}
-            <div className="sm:col-span-3">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                Department
-              </label>
-              <select
-                value={deptFilter}
-                onChange={(e) => setDeptFilter(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-200 focus:border-indigo-600 focus:outline-none"
-              >
-                <option value="all">All Departments ({students.length})</option>
-                {departments.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Target Role Filter */}
-            <div className="sm:col-span-2">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                Target Role
-              </label>
-              <select
-                value={roleFilter}
-                onChange={(e) => setRoleFilter(e.target.value)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-200 focus:border-indigo-600 focus:outline-none"
-              >
-                <option value="all">All Roles</option>
-                {targetRoles.map((r) => (
-                  <option key={r} value={r}>
-                    {r}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            {/* Sort Dropdown */}
-            <div className="sm:col-span-2">
-              <label className="block text-[11px] font-bold text-slate-500 uppercase tracking-wider mb-1">
-                Sort By
-              </label>
-              <select
-                value={sortBy}
-                onChange={(e) => setSortBy(e.target.value as any)}
-                className="w-full rounded-lg border border-slate-300 px-3 py-2 text-xs text-slate-200 focus:border-indigo-600 focus:outline-none"
-              >
-                <option value="score">Readiness Score</option>
-                <option value="skills">Total Skills</option>
-                <option value="journeys">Gaps Mastered</option>
-              </select>
-            </div>
-          </div>
-        </div>
-
-        {/* Student Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-          {filteredStudents.map((student) => {
-            const scoreColor =
-              student.overallScore >= 75
-                ? 'text-emerald-700 bg-emerald-50 border-emerald-200'
-                : student.overallScore >= 50
-                ? 'text-[#00e89b] bg-[#00D68F]/10 border-[#00D68F]/20'
-                : 'text-amber-700 bg-amber-50 border-amber-200';
-
-            return (
-              <div
-                key={student.id}
-                className="rounded-xl border border-[#1e2923] bg-[#121815] p-5 shadow-card hover:border-[#00D68F]/20 transition-all flex flex-col justify-between"
-              >
-                <div>
-                  {/* Top Row: Student Name & Score */}
-                  <div className="flex items-start justify-between gap-2 mb-2">
-                    <div>
-                      <h3 className="font-bold text-sm text-white leading-tight">
-                        {student.name}
-                      </h3>
-                      <div className="text-xs text-slate-500 font-medium">
-                        {student.department || 'Computer Science'} &bull; {student.batchYear || 2026}
-                      </div>
-                    </div>
-
-                    <div
-                      className={`rounded-lg border px-2.5 py-1 text-center font-bold text-xs ${scoreColor}`}
-                    >
-                      <div className="text-sm font-extrabold">{student.overallScore}</div>
-                      <div className="text-[9px] uppercase tracking-wider text-slate-500">Score</div>
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {filteredStudents.map((student) => {
+          const tone = scoreTone(student.overallScore);
+          const toneText = tone === 'pass' ? 'text-pass' : tone === 'warn' ? 'text-warn' : 'text-ink';
+          return (
+            <Sheet key={student.id} hoverable className="flex flex-col justify-between p-4">
+              <div>
+                <div className="mb-2 flex items-start justify-between gap-2.5">
+                  <div className="min-w-0">
+                    <h3 className="truncate text-sm font-bold leading-tight text-ink">
+                      {student.name}
+                    </h3>
+                    <div className="mt-0.5 font-mono text-xxs text-ink-faint">
+                      {student.department || '—'} · {student.batchYear || 2026}
                     </div>
                   </div>
 
-                  {/* Target Role */}
-                  <div className="mb-3">
-                    <span className="inline-block rounded-md bg-[#080B09] px-2 py-0.5 text-[11px] font-semibold text-slate-300">
-                      🎯 {student.targetRole || 'Software Engineer'}
-                    </span>
-                  </div>
-
-                  {/* Extracted Skills */}
-                  <div className="mb-4">
-                    <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
-                      Verified Skill Set ({student.extractedSkills.length})
+                  <div className="graph-inset shrink-0 rounded-md border border-ink-line px-2.5 py-1.5 text-center">
+                    <div className={cn('tabular font-mono text-lg font-semibold leading-none', toneText)}>
+                      {student.overallScore}
                     </div>
-                    <div className="flex flex-wrap gap-1.5 max-h-20 overflow-hidden">
-                      {student.extractedSkills.slice(0, 5).map((skill) => (
-                        <span
-                          key={skill}
-                          className="rounded-md bg-[#080B09] px-2 py-0.5 text-[11px] font-medium text-slate-300"
-                        >
-                          {skill}
-                        </span>
-                      ))}
-                      {student.extractedSkills.length > 5 && (
-                        <span className="rounded-md bg-[#1a231d] px-1.5 py-0.5 text-[10px] text-slate-400">
-                          +{student.extractedSkills.length - 5} more
-                        </span>
-                      )}
+                    <div className="mt-0.5 font-mono text-[10px] uppercase tracking-[0.1em] text-ink-faint">
+                      Score
                     </div>
                   </div>
-
-                  {/* Skill Journeys in Progress */}
-                  {student.recentJourneys && student.recentJourneys.length > 0 && (
-                    <div className="mb-3 rounded-lg bg-[#1a231d] p-2.5 border border-[#233028]">
-                      <div className="text-[10px] font-bold uppercase tracking-wider text-slate-500 mb-1">
-                        Active Gap Learning:
-                      </div>
-                      <div className="space-y-1">
-                        {student.recentJourneys.slice(0, 2).map((j, idx) => (
-                          <div
-                            key={idx}
-                            className="flex items-center justify-between text-[11px] text-slate-300"
-                          >
-                            <span className="font-medium truncate max-w-[140px]">{j.skill}</span>
-                            <span
-                              className={`text-[9px] font-bold px-1.5 py-0.2 rounded ${
-                                j.status === 'completed'
-                                  ? 'bg-emerald-100 text-emerald-800'
-                                  : 'bg-[#00D68F]/20 text-[#00D68F]'
-                              }`}
-                            >
-                              {j.status === 'completed'
-                                ? 'Mastered'
-                                : `${j.completedSteps}/${j.totalSteps || 3}`}
-                            </span>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
                 </div>
 
-                {/* Card Footer */}
-                <div className="pt-3 border-t border-[#233028] flex items-center justify-between">
-                  <span className="text-[11px] text-slate-400">
-                    {student.uploadedAt
-                      ? `Evaluated ${new Date(student.uploadedAt).toLocaleDateString()}`
-                      : 'No resume'}
+                <div className="mb-3">
+                  <span className="inline-flex max-w-full items-center gap-1.5 rounded border border-ink-line bg-sheet-inset px-2 py-1 text-xs font-medium text-ink-soft">
+                    <Crosshair className="h-3 w-3 shrink-0 text-instrument" strokeWidth={1.8} />
+                    <span className="truncate">{student.targetRole || '—'}</span>
                   </span>
-                  <Link
-                    href={`/campus/peers/${student.id}`}
-                    className="rounded-md bg-slate-900 px-2.5 py-1 text-xs font-semibold text-white hover:bg-slate-800 transition-colors"
-                  >
-                    View Details
-                  </Link>
                 </div>
+
+                <div className="mb-3">
+                  <div className="mb-1.5 font-mono text-xxs font-medium uppercase tracking-[0.1em] text-ink-faint">
+                    Measured skills ({student.extractedSkills.length})
+                  </div>
+                  <div className="flex max-h-20 flex-wrap gap-1.5 overflow-hidden">
+                    {student.extractedSkills.slice(0, 5).map((skill) => (
+                      <span
+                        key={skill}
+                        className="rounded border border-ink-line bg-white px-1.5 py-0.5 font-mono text-xs font-medium text-ink"
+                      >
+                        {skill}
+                      </span>
+                    ))}
+                    {student.extractedSkills.length > 5 && (
+                      <span className="rounded border border-ink-line bg-sheet-inset px-1.5 py-0.5 font-mono text-xxs text-ink-faint">
+                        +{student.extractedSkills.length - 5}
+                      </span>
+                    )}
+                  </div>
+                </div>
+
+                {student.recentJourneys && student.recentJourneys.length > 0 && (
+                  <div className="rounded-lg border border-ink-line bg-sheet-inset p-2.5">
+                    <div className="mb-1 font-mono text-xxs font-medium uppercase tracking-[0.1em] text-ink-faint">
+                      Active gap learning
+                    </div>
+                    <div className="space-y-1">
+                      {student.recentJourneys.slice(0, 2).map((j, idx) => (
+                        <div key={idx} className="flex items-center justify-between gap-2">
+                          <span className="truncate text-xs font-medium text-ink-soft">{j.skill}</span>
+                          {j.status === 'completed' ? (
+                            <Badge tone="pass">Mastered</Badge>
+                          ) : (
+                            <span className="tabular shrink-0 font-mono text-xxs text-ink-faint">
+                              {j.completedSteps}/{j.totalSteps || 3}
+                            </span>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
-            );
-          })}
-        </div>
 
-        {filteredStudents.length === 0 && (
-          <div className="rounded-xl border border-[#1e2923] bg-[#121815] p-12 text-center">
-            <p className="text-sm text-slate-500 font-medium">
-              No students match the current filters. Try changing your search keywords.
-            </p>
-          </div>
-        )}
+              <div className="mt-3 flex items-center justify-between gap-2 border-t border-ink-line pt-3">
+                <span className="font-mono text-xxs text-ink-faint">
+                  {student.uploadedAt
+                    ? `Measured ${new Date(student.uploadedAt).toLocaleDateString()}`
+                    : 'No resume'}
+                </span>
+                <Link
+                  href={`/campus/peers/${student.id}`}
+                  className={buttonClasses({ variant: 'outline', size: 'sm' })}
+                >
+                  View details
+                </Link>
+              </div>
+            </Sheet>
+          );
+        })}
+      </div>
 
-    </div>
+      {filteredStudents.length === 0 && (
+        <EmptyState
+          icon={<Users className="h-5 w-5" strokeWidth={1.8} />}
+          title="No students match these filters"
+          body="Try different search keywords, or widen the department and role filters."
+          className="border-ink-line bg-sheet-raise"
+        />
+      )}
+    </>
   );
 }

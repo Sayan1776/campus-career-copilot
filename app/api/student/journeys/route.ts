@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { adminAuth } from '@/lib/firebase/admin';
 import { supabaseAdmin } from '@/lib/supabase/server';
 import { generateSkillJourney, JourneyStep } from '@/lib/ai/client';
+import { getDefaultRoleForDepartment } from '@/lib/departments';
 
 export const runtime = 'nodejs';
 export const dynamic = 'force-dynamic';
@@ -82,17 +83,20 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'A journey for this skill already exists', journeyId: existing.id }, { status: 400 });
     }
 
-    // Get user's target role
+    // Get the student's target role and department so the journey is
+    // generated in their branch's context
     const { data: user } = await supabaseAdmin
       .from('users')
-      .select('target_role')
+      .select('target_role, department')
       .eq('id', auth.uid)
       .single();
 
-    const targetRole = user?.target_role || 'Software Engineer';
+    const department = user?.department || null;
+    const targetRole =
+      (user?.target_role || '').trim() || getDefaultRoleForDepartment(department);
 
     try {
-      const generated = await generateSkillJourney(skill, targetRole);
+      const generated = await generateSkillJourney(skill, targetRole, department);
 
       const { data: created, error: insertErr } = await supabaseAdmin
         .from('skill_journeys')

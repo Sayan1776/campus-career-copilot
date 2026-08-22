@@ -4,25 +4,24 @@ import { MapContainer, TileLayer, Marker, Popup } from 'react-leaflet';
 import L from 'leaflet';
 import 'leaflet/dist/leaflet.css';
 
-// Leaflet's default marker icons reference image paths that break under
-// Next.js's bundler. This rebuilds them from the CDN so pins actually render.
-const defaultIcon = L.icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconSize: [25, 41],
-  iconAnchor: [12, 41],
-  popupAnchor: [1, -34],
-  shadowSize: [41, 41],
-});
+// Authored pins: ink circles for companies, instrument red for the campus
+// station. Built as divIcons so nothing loads from a CDN.
+function companyIcon(name: string) {
+  return L.divIcon({
+    className: '',
+    html: `<div class="cc-pin-co" aria-hidden>${name.charAt(0).toUpperCase()}</div>`,
+    iconSize: [32, 32],
+    iconAnchor: [16, 32],
+    popupAnchor: [0, -30],
+  });
+}
 
-const campusIcon = L.icon({
-  iconUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-icon-2x.png',
-  shadowUrl: 'https://unpkg.com/leaflet@1.9.4/dist/images/marker-shadow.png',
-  iconSize: [30, 49],
-  iconAnchor: [15, 49],
-  popupAnchor: [1, -40],
-  shadowSize: [41, 41],
-  className: 'campus-marker',
+const campusIcon = L.divIcon({
+  className: '',
+  html: '<div class="cc-pin-campus" aria-hidden>CC<span class="cc-pin-pulse" aria-hidden></span></div>',
+  iconSize: [36, 36],
+  iconAnchor: [18, 36],
+  popupAnchor: [0, -34],
 });
 
 interface CompanyVisit {
@@ -44,14 +43,15 @@ export default function CampusMap({ campusLat, campusLng, campusName, visits }: 
   return (
     <MapContainer
       center={[campusLat, campusLng]}
-      zoom={12}
-      style={{ height: '400px', width: '100%', borderRadius: '8px' }}
+      zoom={15}
+      style={{ height: '480px', width: '100%' }}
+      aria-label={`Map of campus placement drives around ${campusName}`}
     >
       <TileLayer
         attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
       />
-      <Marker position={[campusLat, campusLng]} icon={campusIcon}>
+      <Marker position={[campusLat, campusLng]} icon={campusIcon} title={campusName}>
         <Popup>
           <b>{campusName}</b>
           <br />
@@ -59,7 +59,12 @@ export default function CampusMap({ campusLat, campusLng, campusName, visits }: 
         </Popup>
       </Marker>
       {visits.map((v) => (
-        <Marker key={v.id} position={[v.location_lat, v.location_lng]} icon={defaultIcon}>
+        <Marker
+          key={v.id}
+          position={[v.location_lat, v.location_lng]}
+          icon={companyIcon(v.company_name)}
+          title={v.company_name}
+        >
           <Popup>
             <b>{v.company_name}</b>
             {v.visit_date && (

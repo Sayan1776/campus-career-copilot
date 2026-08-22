@@ -1,10 +1,32 @@
 import { cookies } from 'next/headers';
 import { adminAuth } from '@/lib/firebase/admin';
 import { supabaseAdmin } from '@/lib/supabase/server';
-import PeerProgressClient, { PeerStudent } from './PeerProgressClient';
+import nextDynamic from 'next/dynamic';
 import { redirect } from 'next/navigation';
+import { Skeleton } from '@/components/ui/Skeleton';
+import type { PeerStudent } from './PeerProgressClient';
 
 export const dynamic = 'force-dynamic';
+
+// The directory console streams in behind its gauges.
+const PeerProgressClient = nextDynamic(() => import('./PeerProgressClient'), {
+  ssr: false,
+  loading: () => (
+    <div aria-busy="true" className="space-y-5">
+      <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
+        {Array.from({ length: 4 }).map((_, i) => (
+          <Skeleton key={i} className="h-[86px] rounded-xl" />
+        ))}
+      </div>
+      <Skeleton className="h-28 rounded-xl" />
+      <div className="grid grid-cols-1 gap-4 md:grid-cols-2 lg:grid-cols-3">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <Skeleton key={i} className="h-64 rounded-xl" />
+        ))}
+      </div>
+    </div>
+  ),
+});
 
 async function getCurrentUserRole(): Promise<{ uid: string; role: string } | null> {
   const sessionCookie = cookies().get('session')?.value;
@@ -87,7 +109,7 @@ export default async function CampusPeersPage() {
         skill: j.skill,
         status: j.status,
         completedSteps: j.completed_steps || 0,
-        totalSteps: j.total_steps || 3,
+        totalSteps: j.total_steps || 4,
       });
     }
 
@@ -106,7 +128,7 @@ export default async function CampusPeersPage() {
     return {
       id: s.id,
       name: s.name || 'Anonymous Student',
-      department: s.department || 'Computer Science',
+      department: s.department || 'Not set',
       batchYear: s.batch_year || 2026,
       targetRole: s.target_role || '-',
       overallScore: resume?.overall_score || 0,
@@ -119,9 +141,11 @@ export default async function CampusPeersPage() {
   });
 
   return (
-    <PeerProgressClient
-      students={peerStudents}
-      userRole={auth.role === 'tpo' ? 'TPO' : auth.role === 'recruiter' ? 'Recruiter' : 'Student'}
-    />
+    <div className="page-canvas">
+      <PeerProgressClient
+        students={peerStudents}
+        userRole={auth.role === 'tpo' ? 'TPO' : 'Student'}
+      />
+    </div>
   );
 }

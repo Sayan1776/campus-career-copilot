@@ -1,7 +1,7 @@
 'use client';
 
 import { getMessaging, getToken, onMessage } from 'firebase/messaging';
-import { firebaseApp } from '@/lib/firebase/client';
+import { firebaseApp } from '@/lib/firebase/app';
 
 /**
  * Requests notification permission, grabs an FCM device token, and saves

@@ -7,7 +7,7 @@
 ## 🌟 Key Highlights
 
 - 👥 **Campus Peer Progress Hub**: Searchable institutional directory to explore classmates' technical skill profiles, target roles, readiness scores, and active learning milestones.
-- 🗺️ **Gamified AI Skill Journeys**: Turns detected resume skill gaps into structured 3-stage actionable roadmaps (Concept Briefs $\rightarrow$ Practical Challenges $\rightarrow$ Self-Check Quizzes) powered by **Groq Llama 3.3 70B**.
+- 🗺️ **Gamified AI Skill Journeys**: Turns detected resume skill gaps into structured 3-stage actionable roadmaps (Concept Briefs $\rightarrow$ Practical Challenges $\rightarrow$ Self-Check Quizzes) powered by **gemini 3.5 flash lite**.
 - 📊 **TPO Cohort Diagnostics**: Real-time batch placement readiness analytics, horizontal severity-coded gap charts, department-wise filters, and 1-click targeted workshop push broadcasts via **Firebase Cloud Messaging (FCM)**.
 - 🎯 **Recruiter Candidate Match**: Instant semantic candidate ranking against posted Job Descriptions (JDs) based on verified skill overlap.
 - 🛡️ **Role-Based Security**: Protected routes gated by Firebase custom claims and Supabase Row Level Security (RLS).

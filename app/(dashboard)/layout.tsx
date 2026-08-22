@@ -3,6 +3,7 @@ import { adminAuth } from '@/lib/firebase/admin';
 import { supabaseAdmin } from '@/lib/supabase/server';
 import { redirect } from 'next/navigation';
 import Sidebar from '@/components/Sidebar';
+import NotificationListener from '@/app/NotificationListener';
 
 export const dynamic = 'force-dynamic';
 
@@ -26,7 +27,6 @@ export default async function DashboardLayout({
     redirect('/login');
   }
 
-  // Fetch user profile for the sidebar
   const { data: userProfile } = await supabaseAdmin
     .from('users')
     .select('name, department, target_role, role')
@@ -34,7 +34,8 @@ export default async function DashboardLayout({
     .single();
 
   return (
-    <div className="flex min-h-screen bg-transparent dispatch-grid">
+    <div className="flex min-h-screen">
+      <NotificationListener />
       <Sidebar
         userProfile={{
           name: userProfile?.name || 'User',
@@ -43,8 +44,7 @@ export default async function DashboardLayout({
           targetRole: userProfile?.target_role || undefined,
         }}
       />
-      {/* Main content area — offset by sidebar width on desktop */}
-      <main className="flex-1 min-h-screen md:ml-[284px] overflow-y-auto">
+      <main className="min-h-screen flex-1 overflow-y-auto md:ml-[284px]">
         {children}
       </main>
     </div>

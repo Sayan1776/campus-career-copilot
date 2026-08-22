@@ -3,6 +3,7 @@ import { adminAuth } from '@/lib/firebase/admin';
 import { supabaseAdmin } from '@/lib/supabase/server';
 import { analyzeResume } from '@/lib/ai/client';
 import { sendPushToTokens } from '@/lib/firebase/send-push';
+import { getDefaultRoleForDepartment } from '@/lib/departments';
 
 export const runtime = 'nodejs';
 
@@ -39,7 +40,7 @@ export async function POST(req: NextRequest) {
   // 2. Parse the multipart form
   const formData = await req.formData();
   const file = formData.get('resume') as File | null;
-  const targetRole = (formData.get('targetRole') as string | null) || 'Software Engineer';
+  const formTargetRole = formData.get('targetRole') as string | null;
 
   if (!file) {
     return NextResponse.json({ error: 'no file uploaded' }, { status: 400 });
@@ -48,8 +49,22 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'only PDF files are supported' }, { status: 400 });
   }
 
-  // 3. Insert a "processing" row up front so the UI can show status even
-  // if the Groq call is slow or fails partway.
+  // 3. Load the student's profile once: department drives the AI analysis,
+  // and the saved target role fills in when the form omits one.
+  const { data: profile } = await supabaseAdmin
+    .from('users')
+    .select('department, target_role, fcm_token')
+    .eq('id', uid)
+    .single();
+
+  const department = profile?.department || null;
+  const targetRole =
+    (formTargetRole || '').trim() ||
+    (profile?.target_role || '').trim() ||
+    getDefaultRoleForDepartment(department);
+
+  // 4. Insert a "processing" row up front so the UI can show status even
+  // if the AI call is slow or fails partway.
   const { data: resumeRow, error: insertError } = await supabaseAdmin
     .from('resumes')
     .insert({
@@ -69,7 +84,7 @@ export async function POST(req: NextRequest) {
   }
 
   try {
-    // 4. Extract text, then score with Groq
+    // 5. Extract text, then score with the AI model in the student's domain
     const buffer = Buffer.from(await file.arrayBuffer());
     const text = await extractTextFromPdf(buffer);
 
@@ -77,9 +92,9 @@ export async function POST(req: NextRequest) {
       throw new Error('Could not extract readable text from this PDF');
     }
 
-    const analysis = await analyzeResume(text, targetRole);
+    const analysis = await analyzeResume(text, targetRole, department);
 
-    // 5. Write the result, mark complete
+    // 6. Write the result, mark complete
     const { data: updated, error: updateError } = await supabaseAdmin
       .from('resumes')
       .update({
@@ -94,17 +109,17 @@ export async function POST(req: NextRequest) {
 
     if (updateError) throw new Error(updateError.message);
 
+    // Keep the student's saved target role in sync with what they just
+    // analyzed for, so journeys and dashboards stay current. Non-fatal.
+    if (targetRole !== (profile?.target_role || '').trim()) {
+      await supabaseAdmin.from('users').update({ target_role: targetRole }).eq('id', uid);
+    }
+
     // Fire a push notification if the student has granted permission.
     // Non-blocking in spirit: we don't fail the request if this fails.
-    const { data: userRow } = await supabaseAdmin
-      .from('users')
-      .select('fcm_token')
-      .eq('id', uid)
-      .single();
-
-    if (userRow?.fcm_token) {
+    if (profile?.fcm_token) {
       await sendPushToTokens(
-        [userRow.fcm_token],
+        [profile.fcm_token],
         'Resume analysis ready',
         `Your resume scored ${analysis.overall_score}/100 for ${targetRole}.`
       );

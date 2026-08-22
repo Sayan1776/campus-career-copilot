@@ -24,7 +24,7 @@ Students use the portal while preparing for campus drives, uploading PDF resumes
 
 ## Capabilities and Constraints
 
-The app is a Next.js web product backed by Firebase authentication, Supabase data, Groq resume analysis, Firebase push notifications, Recharts analytics, and Leaflet campus mapping. Authenticated dashboards are role-routed for student, TPO, and recruiter users. Existing product terminology includes placement readiness, skill journeys, peer progress, cohort analytics, job descriptions, and competency radar.
+The app is a Next.js web product backed by Firebase authentication, Supabase data, gemini resume analysis, Firebase push notifications, Recharts analytics, and Leaflet Aboutping. Authenticated dashboards are role-routed for student, TPO, and recruiter users. Existing product terminology includes placement readiness, skill journeys, peer progress, cohort analytics, job descriptions, and competency radar.
 
 ## Brand Commitments
 

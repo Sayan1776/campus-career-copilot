@@ -12,7 +12,9 @@ export default function CompetencyList({ skills }: Props) {
 
   if (!skills || skills.length === 0) {
     return (
-      <div className="text-sm text-slate-500 italic">No technical competencies found.</div>
+      <div className="text-sm italic text-ink-faint">
+        No technical competencies measured yet.
+      </div>
     );
   }
 
@@ -25,17 +27,17 @@ export default function CompetencyList({ skills }: Props) {
         {displayedSkills.map((skill) => (
           <span
             key={skill}
-            className="rounded-lg border border-[#00D68F]/10 bg-[#00D68F]/10/70 px-2.5 py-1 text-xs font-medium text-[#00e89b]"
+            className="rounded border border-ink-line bg-white px-2 py-1 font-mono text-xs font-medium text-ink"
           >
             {skill}
           </span>
         ))}
       </div>
-      
+
       {!showAll && hiddenCount > 0 && (
         <button
           onClick={() => setShowAll(true)}
-          className="mt-3 text-xs font-semibold text-slate-400 hover:text-[#00e89b] transition-colors"
+          className="mt-3 font-mono text-xs font-medium text-instrument-deep underline-offset-2 hover:underline"
         >
           + Show {hiddenCount} more
         </button>
@@ -44,7 +46,7 @@ export default function CompetencyList({ skills }: Props) {
       {showAll && hiddenCount > 0 && (
         <button
           onClick={() => setShowAll(false)}
-          className="mt-3 text-xs font-semibold text-slate-400 hover:text-[#00e89b] transition-colors"
+          className="mt-3 font-mono text-xs font-medium text-instrument-deep underline-offset-2 hover:underline"
         >
           Show less
         </button>

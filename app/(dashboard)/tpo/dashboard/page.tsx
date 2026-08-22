@@ -1,7 +1,26 @@
 import { supabaseAdmin } from '@/lib/supabase/server';
-import CohortAnalyticsClient from './CohortAnalyticsClient';
+import nextDynamic from 'next/dynamic';
+import { Skeleton } from '@/components/ui/Skeleton';
 
 export const dynamic = 'force-dynamic';
+
+// The analytics console (recharts + table) streams in behind its gauges.
+const CohortAnalyticsClient = nextDynamic(() => import('./CohortAnalyticsClient'), {
+  ssr: false,
+  loading: () => (
+    <div aria-busy="true" className="space-y-5">
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 lg:grid-cols-5">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <Skeleton key={i} className="h-[86px] rounded-xl" />
+        ))}
+      </div>
+      <div className="grid grid-cols-1 gap-5 lg:grid-cols-2">
+        <Skeleton className="h-96 rounded-xl" />
+        <Skeleton className="h-96 rounded-xl" />
+      </div>
+    </div>
+  ),
+});
 
 interface SkillGap {
   skill: string;
@@ -107,27 +126,31 @@ export default async function TpoDashboard() {
       return {
         id: r.user_id,
         name: user?.name ?? 'Unknown Student',
-        department: user?.department ?? 'Computer Science',
+        department: user?.department ?? 'Not set',
         targetRole: user?.target_role ?? '-',
+        batchYear: user?.batch_year ?? null,
         score: r.overall_score ?? 0,
         gapCount: (r.skill_gaps || []).length,
         journeysActive: journeyStats.inProgress,
         journeysCompleted: journeyStats.completed,
+        gaps: r.skill_gaps || [],
       };
     })
     .sort((a, b) => a.score - b.score); // weakest first
 
   return (
-    <CohortAnalyticsClient
-      totalStudents={userMap.size}
-      totalEvaluated={totalEvaluated}
-      averageScore={averageScore}
-      criticalGapCount={criticalGapCount}
-      topMissingSkill={topMissingSkill}
-      totalJourneysResolved={totalJourneysResolved}
-      totalJourneysActive={totalJourneysActive}
-      skillGapData={skillGapData}
-      roster={roster}
-    />
+    <div className="page-canvas">
+      <CohortAnalyticsClient
+        totalStudents={userMap.size}
+        totalEvaluated={totalEvaluated}
+        averageScore={averageScore}
+        criticalGapCount={criticalGapCount}
+        topMissingSkill={topMissingSkill}
+        totalJourneysResolved={totalJourneysResolved}
+        totalJourneysActive={totalJourneysActive}
+        skillGapData={skillGapData}
+        roster={roster}
+      />
+    </div>
   );
 }
