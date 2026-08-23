@@ -30,61 +30,50 @@
 ## 🏛️ System Architecture
 
 ```mermaid
-graph TD
-    subgraph Users & Personas
-        Student["🎓 Student (Candidate)"]
-        TPO["🏢 Placement Cell / TPO Admin"]
-    end
+graph LR
+    Users["Users (Student / TPO)"] --> Frontend["Next.js Frontend (App Router)"]
+    Frontend --> Security["Security (Edge Middleware)"]
+    Security --> API["Node.js API Route Handlers"]
+    API --> Services["Cloud Services (Supabase, Gemini AI, Firebase)"]
+```
 
-    subgraph Client Layer [Next.js 14 App Router - Instrument Sheet UI]
-        StudentDash["Student Dashboard & Radar (/student/dashboard)"]
-        ResumeUpload["Resume Analyzer & LaTeX Builder (/student/upload)"]
-        JourneysConsole["4-Step Skill Journeys Console (/student/journeys)"]
-        PeerHub["Campus Peer Progress Hub (/campus/peers)"]
-        TPODash["TPO Cohort Analytics & FCM Dispatch (/tpo/dashboard)"]
-        CampusMapUI["Interactive Campus Drive Map (/about)"]
-        Settings2FA["Profile & TOTP 2FA Management (/settings)"]
-    end
+### 🔐 Authentication Flow
 
-    subgraph Security & Routing Layer
-        EdgeMiddleware["Next.js Edge Middleware (HMAC-SHA256 Role Check)"]
-        AuthHandler["Dual-Cookie Session Handler (/api/auth/*)"]
-        VerifySession["Server-Side Session Guard (firebase-admin)"]
-    end
+```mermaid
+sequenceDiagram
+    participant Client as Browser
+    participant Firebase as Firebase Auth
+    participant API as /api/auth/session
+    participant Edge as Edge Middleware
 
-    subgraph API Route Handlers [Node.js Server Runtime]
-        APIResumeAnalyze["/api/resume/analyze (pdf-parse + Gemini)"]
-        APIResumeBuild["/api/resume/build (Gemini LaTeX Engine)"]
-        APIJourneys["/api/student/journeys (Roadmap & Quiz Engine)"]
-        APITPONotify["/api/tpo/notify (Targeted FCM Push Broadcast)"]
-        APISeed["/api/seed (18-Student Multi-Dept Cohort Seeder)"]
-        APIProfile["/api/profile (User Profile Management)"]
-        APIFCMToken["/api/notifications/register-token"]
-    end
+    Client->>Firebase: Login (Email/Password + 2FA)
+    Firebase-->>Client: ID Token
+    Client->>API: POST ID Token
+    API-->>Client: Set HttpOnly 'session' & HMAC 'session_role' cookies
+    Client->>Edge: Request Protected Route (/student/*)
+    Edge->>Edge: Verify HMAC 'session_role' (0ms)
+    Edge-->>Client: Allow or Redirect
+```
 
-    subgraph Data & Cloud Services Layer
-        SupabaseDB[("Supabase PostgreSQL (Service-Role Client)")]
-        GeminiAI["Google Gemini 3.5 Flash Lite API"]
-        FirebaseAuth["Firebase Auth (Custom Role Claims + TOTP MFA)"]
-        FCMService["Firebase Cloud Messaging (Web Push)"]
-        OSM["OpenStreetMap / Leaflet GIS"]
-    end
+### 📄 Resume Analysis Flow
 
-    Student --> StudentDash & ResumeUpload & JourneysConsole & PeerHub & Settings2FA
-    TPO --> TPODash & PeerHub & Settings2FA
+```mermaid
+graph LR
+    Upload["Student Uploads PDF"] --> Extract["pdf-parse (Text Extraction)"]
+    Extract --> AI["Gemini 3.5 AI Evaluation"]
+    AI --> DB[("Supabase (Save Score & Gaps)")]
+    DB --> UI["Update 360° Radar & Send Push"]
+```
 
-    StudentDash & ResumeUpload & JourneysConsole & TPODash --> EdgeMiddleware
-    EdgeMiddleware --> VerifySession
-    VerifySession --> APIResumeAnalyze & APIResumeBuild & APIJourneys & APITPONotify & APISeed & APIProfile & APIFCMToken
+### 🗺️ Student Skill Journey Flow
 
-    APIResumeAnalyze --> GeminiAI & SupabaseDB & FCMService
-    APIResumeBuild --> GeminiAI
-    APIJourneys --> GeminiAI & SupabaseDB
-    APITPONotify --> SupabaseDB & FCMService
-    APISeed --> SupabaseDB
-    APIProfile --> SupabaseDB
-    APIFCMToken --> SupabaseDB
-    CampusMapUI --> OSM
+```mermaid
+graph LR
+    Gap["Identified Skill Gap"] --> Concept["1. Concept & Notes"]
+    Concept --> Course["2. Recommended Course"]
+    Course --> Challenge["3. Practical Challenge"]
+    Challenge --> Quiz["4. Gamified MCQ Quiz"]
+    Quiz --> Mastered(("Skill Mastered!"))
 ```
 
 ---
