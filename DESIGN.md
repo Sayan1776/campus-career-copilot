@@ -9,8 +9,8 @@ Wall, Answer Sheet declined).
 ## World
 
 Campus placement readiness as **calibrated measurement on engineering workbook
-sheets**. Every screen is a numbered sheet: students read instruments, TPOs
-watch a bank of gauges, recruiters compare candidates on a measurement table.
+sheets**. Every screen is a numbered sheet: students read instruments and journey
+quests, and TPOs watch a bank of cohort gauges and dispatch targeted interventions.
 The graph-paper ground, hairline ink edges, mono readings, and tick-marked
 scales are the product's own material — engineering graph paper, the geometry
 box, the plotted chart.
